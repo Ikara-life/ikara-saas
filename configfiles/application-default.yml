@@ -1,0 +1,30 @@
+core:
+  db:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: Vishwas123#
+    flyway:
+      url: jdbc:postgresql://localhost:5432/postgres
+
+spring:
+  flyway:
+    enabled: false
+
+redis:
+  url: redis://default@localhost:6379
+  codec: object
+  cache:
+    prefix: j13n
+
+logging:
+  level:
+    root: INFO
+    com.j13n: DEBUG
+    org.jooq: DEBUG
+    org.jooq.tools.LoggerListener: DEBUG
+
+mq:
+  host: localhost
+  port: 5672
+  username: ~
+  password: ~

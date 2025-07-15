@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: config
+  cloud:
+    config:
+      server:
+        bootstrap: true
+  profiles:
+    active: ${SPRING_PROFILE:default}
+
+management:
+  metrics:
+    tags:
+      application: ${INSTANCE_ENVIRONMENT:LOCAL}-${spring.application.name}-${INSTANCE_ID:default}
+  info:
+    env:
+      enabled: true
+  security:
+    enabled: false
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      expose: "*"
+      exposure:
+        include: "*"
+
+endpoints:
+  enabled: true
+
+server:
+  port: 8888
+
+eureka:
+  client:
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:${EUREKA_SERVER_PORT:9999}/eureka/
+  instance:
+    prefer-ip-address: true
+
+logging:
+  structured:
+    format:
+      console: gelf
+      file: gelf
+    json:
+      add:
+        instanceId: ${INSTANCE_ID:default}

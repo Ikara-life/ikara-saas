@@ -1,0 +1,91 @@
+name: Build and Push Config, Eureka, and Core Images
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  VERSION: 1.1.0
+  GHCR_REGISTRY: ghcr.io
+  GHCR_REPO: ghcr.io/ikara-life/ikara-saas
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          cache: 'maven'
+
+      - name: Build commons JAR
+        working-directory: ./commons
+        run: mvn clean install
+
+      - name: Build config JAR
+        working-directory: ./config
+        run: mvn clean install
+
+      - name: Build eureka JAR
+        working-directory: ./eureka
+        run: mvn clean install
+
+      - name: Build core JAR
+        working-directory: ./core
+        run: mvn clean install
+
+      - name: Docker Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.GHCR_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker version
+        id: dockerVersion
+        run: |
+          VERSION=$(date '+%Y%m%d%H%M%S')
+          echo "Setting version to ${VERSION}"
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Config Image
+        working-directory: config
+        env:
+          GIT_URL: ${{ secrets.GIT_URL }}
+          GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+        run: |
+          IMAGE_NAME=${{ env.GHCR_REPO }}/config
+          docker build -t $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} .
+          docker push $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }}
+          docker tag $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
+
+      - name: Build and Push Eureka Image
+        working-directory: eureka
+        run: |
+          IMAGE_NAME=${{ env.GHCR_REPO }}/eureka
+          docker build -t $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} .
+          docker push $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }}
+          docker tag $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
+
+      - name: Build and Push Core Image
+        working-directory: core
+        run: |
+          IMAGE_NAME=${{ env.GHCR_REPO }}/core
+          docker build -t $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} .
+          docker push $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }}
+          docker tag $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest

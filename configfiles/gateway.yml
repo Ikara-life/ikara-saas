@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: core
+          uri: lb://core
+          predicates:
+            - Path=/api/core/**, /*/api/core/**, /*/*/api/core/**, /*/*/*/api/core/**, /*/*/*/*/api/core/**, /*/*/*/*/*/api/core/**, /*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**,
+  boot:
+    admin:
+      client:
+        instance:
+          name: Gateway
+
+redis:
+  cache:
+    prefix: gtw

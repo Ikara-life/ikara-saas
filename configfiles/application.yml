@@ -1,0 +1,68 @@
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.sss} %-5level %r --- %X{x-debug} [%thread] %logger{40} : %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.sss} %-5level %r --- %X{x-debug} [%thread] %logger{40} : %msg%n"
+    json:
+      add:
+        instanceId: ${INSTANCE_ID:default}
+  level:
+    org:
+      jooq: DEBUG
+
+eureka:
+  client:
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:${EUREKA_SERVER_PORT:9999}/eureka/
+  instance:
+    prefer-ip-address: true
+
+# server:
+#   shutdown: graceful
+
+management:
+  security:
+    enabled: false
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      expose: "*"
+      exposure:
+        include: "*"
+
+endpoints:
+  enabled: true
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  codec:
+    max-in-memory-size: 5MB
+
+jwt:
+  key: ficity_secret_token_for_the_new_saas_application_it_requires_a_very_long_key_to_sign_tokens
+  token:
+    rememberme:
+      expiry: 525600
+    default:
+      expiry: 30
+
+files:
+  resources:
+    location:
+      static: ./static
+      secured: ./secured
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 120000
+        readTimeout: 120000
