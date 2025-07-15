@@ -27,8 +27,8 @@
         <url/>
     </scm>
     <properties>
-        <base.package>io.j13n</base.package>
-        <base.package.dir>io/j13n</base.package.dir>
+        <base.package>studio.ikara</base.package>
+        <base.package.dir>studio/ikara</base.package.dir>
         <database.db.name>postgres</database.db.name>
         <database.schema.name>core</database.schema.name>
         <env.ENVIRONMENT>dev</env.ENVIRONMENT>
@@ -105,7 +105,7 @@
             <version>${langchain4j.beta.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.j13n</groupId>
+            <groupId>studio.ikara</groupId>
             <artifactId>commons</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -262,7 +262,7 @@
                         <image>openjdk:alpine</image>
                     </from>
                     <to>
-                        <image>ghcr.io/j13n-saas/core</image>
+                        <image>ghcr.io/ikara-life/core</image>
                         <tags>
                             <tag>${env.ENVIRONMENT}</tag>
                             <tag>${project.version}</tag>
@@ -321,34 +321,6 @@
                                         </schema>
                                     </schemata>
                                     <forcedTypes>
-                                        <forcedType>
-                                            <name>FILE_SYSTEM_TYPE</name>
-                                            <userType>io.j13n.core.enums.FileSystemType</userType>
-                                            <includeExpression>.*\.FILE_SYSTEM_TYPE</includeExpression>
-                                            <includeTypes>.*</includeTypes>
-                                            <enumConverter>true</enumConverter>
-                                        </forcedType>
-                                        <forcedType>
-                                            <name>FILE_RESOURCE_TYPE</name>
-                                            <userType>io.j13n.core.enums.FileResourceType</userType>
-                                            <includeExpression>.*\.FILE_RESOURCE_TYPE</includeExpression>
-                                            <includeTypes>.*</includeTypes>
-                                            <enumConverter>true</enumConverter>
-                                        </forcedType>
-                                        <forcedType>
-                                            <name>USER_STATUS_CODE</name>
-                                            <userType>io.j13n.core.enums.UserStatusCode</userType>
-                                            <includeExpression>.*\.USER_STATUS_CODE</includeExpression>
-                                            <includeTypes>.*</includeTypes>
-                                            <enumConverter>true</enumConverter>
-                                        </forcedType>
-                                        <forcedType>
-                                            <name>JOB_STATUS</name>
-                                            <userType>io.j13n.core.enums.JobStatus</userType>
-                                            <includeExpression>.*\.JOB_STATUS</includeExpression>
-                                            <includeTypes>.*</includeTypes>
-                                            <enumConverter>true</enumConverter>
-                                        </forcedType>
                                     </forcedTypes>
                                 </database>
                                 <generate>

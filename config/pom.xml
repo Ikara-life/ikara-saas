@@ -95,7 +95,7 @@
                         <image>openjdk:alpine</image>
                     </from>
                     <to>
-                        <image>ghcr.io/j13n-saas/config</image>
+                        <image>ghcr.io/ikara-life/config</image>
                         <tags>
                             <tag>${env.ENVIRONMENT}</tag>
                             <tag>${project.version}</tag>

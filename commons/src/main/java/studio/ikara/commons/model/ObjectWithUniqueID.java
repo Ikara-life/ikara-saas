@@ -1,11 +1,11 @@
 package studio.ikara.commons.model;
 
-import io.j13n.commons.util.StringUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import studio.ikara.commons.util.StringUtil;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -1,9 +1,9 @@
 package studio.ikara.commons.model.condition;
 
-import io.j13n.commons.util.StringUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import studio.ikara.commons.util.StringUtil;
 
 import java.io.Serial;
 import java.util.List;

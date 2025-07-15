@@ -1,9 +1,9 @@
 package studio.ikara.commons.model.condition;
 
-import io.j13n.commons.util.StringUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import studio.ikara.commons.util.StringUtil;
 
 import java.io.Serial;
 import java.util.List;
@@ -29,9 +29,8 @@ public class ComplexCondition extends AbstractCondition {
 
     @Override
     public List<FilterCondition> findConditionWithField(String fieldName) {
-        if (StringUtil.safeIsBlank(fieldName)) {
+        if (StringUtil.safeIsBlank(fieldName))
             return List.of();
-        }
 
         return this.conditions.stream()
                 .flatMap(condition -> condition.findConditionWithField(fieldName).stream())

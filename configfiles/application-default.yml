@@ -14,12 +14,12 @@ redis:
   url: redis://default@localhost:6379
   codec: object
   cache:
-    prefix: j13n
+    prefix: ikara
 
 logging:
   level:
     root: INFO
-    com.j13n: DEBUG
+    studio.ikara: DEBUG
     org.jooq: DEBUG
     org.jooq.tools.LoggerListener: DEBUG
 

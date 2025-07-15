@@ -1,7 +1,7 @@
 package studio.ikara.commons.configuration.service;
 
-import io.j13n.commons.exception.GenericException;
-import io.j13n.commons.util.StringFormatter;
+import studio.ikara.commons.exception.GenericException;
+import studio.ikara.commons.util.StringFormatter;
 
 import java.util.Locale;
 import java.util.Map;

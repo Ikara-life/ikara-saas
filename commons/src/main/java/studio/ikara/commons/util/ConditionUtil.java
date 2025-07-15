@@ -1,10 +1,10 @@
 package studio.ikara.commons.util;
 
-import io.j13n.commons.model.condition.AbstractCondition;
-import io.j13n.commons.model.condition.ComplexCondition;
-import io.j13n.commons.model.condition.ComplexConditionOperator;
-import io.j13n.commons.model.condition.FilterCondition;
-import io.j13n.commons.model.condition.FilterConditionOperator;
+import studio.ikara.commons.model.condition.AbstractCondition;
+import studio.ikara.commons.model.condition.ComplexCondition;
+import studio.ikara.commons.model.condition.ComplexConditionOperator;
+import studio.ikara.commons.model.condition.FilterCondition;
+import studio.ikara.commons.model.condition.FilterConditionOperator;
 
 import java.util.List;
 import java.util.Map;

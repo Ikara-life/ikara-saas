@@ -1,8 +1,6 @@
 package studio.ikara.commons.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.j13n.commons.configuration.service.AbstractMessageService;
-import io.j13n.commons.exception.GenericException;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -13,6 +11,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import studio.ikara.commons.configuration.service.AbstractMessageService;
+import studio.ikara.commons.exception.GenericException;
 
 import java.net.URI;
 import java.time.Instant;

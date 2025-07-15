@@ -1,12 +1,12 @@
 package studio.ikara.commons.model;
 
-import io.j13n.commons.model.condition.AbstractCondition;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import studio.ikara.commons.model.condition.AbstractCondition;
 
 import java.io.Serial;
 import java.io.Serializable;
