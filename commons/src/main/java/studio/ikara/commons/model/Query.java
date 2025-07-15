@@ -1,5 +1,8 @@
 package studio.ikara.commons.model;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.domain.PageRequest;
@@ -7,10 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import studio.ikara.commons.model.condition.AbstractCondition;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @Accessors(chain = true)

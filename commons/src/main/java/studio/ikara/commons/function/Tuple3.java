@@ -1,12 +1,11 @@
 package studio.ikara.commons.function;
 
-import lombok.Getter;
-import reactor.util.annotation.NonNull;
-import reactor.util.annotation.Nullable;
-
 import java.io.Serial;
 import java.util.Objects;
 import java.util.function.Function;
+import lombok.Getter;
+import reactor.util.annotation.NonNull;
+import reactor.util.annotation.Nullable;
 
 @Getter
 public class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {

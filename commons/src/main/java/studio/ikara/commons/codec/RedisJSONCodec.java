@@ -4,13 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.codec.RedisCodec;
-import org.springframework.http.HttpStatus;
-import studio.ikara.commons.exception.GenericException;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
+import studio.ikara.commons.exception.GenericException;
 
 public class RedisJSONCodec implements RedisCodec<String, Object> {
 

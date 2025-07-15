@@ -1,13 +1,12 @@
 package studio.ikara.commons.exception;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.springframework.http.HttpStatus;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.springframework.http.HttpStatus;
 
 public class GenericException extends RuntimeException {
 

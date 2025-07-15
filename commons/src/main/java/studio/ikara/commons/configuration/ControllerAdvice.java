@@ -2,6 +2,8 @@ package studio.ikara.commons.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Priority;
+import java.net.URI;
+import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import studio.ikara.commons.configuration.service.AbstractMessageService;
 import studio.ikara.commons.exception.GenericException;
-
-import java.net.URI;
-import java.time.Instant;
 
 @Slf4j
 @RestControllerAdvice

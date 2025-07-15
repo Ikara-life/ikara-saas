@@ -1,14 +1,13 @@
 package studio.ikara.commons.util;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import studio.ikara.commons.model.condition.AbstractCondition;
 import studio.ikara.commons.model.condition.ComplexCondition;
 import studio.ikara.commons.model.condition.ComplexConditionOperator;
 import studio.ikara.commons.model.condition.FilterCondition;
 import studio.ikara.commons.model.condition.FilterConditionOperator;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ConditionUtil {
 

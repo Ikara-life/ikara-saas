@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 import studio.ikara.commons.function.Tuple2;
 import studio.ikara.commons.function.Tuple3;
 import studio.ikara.commons.function.Tuple4;
@@ -18,11 +22,6 @@ import studio.ikara.commons.function.Tuple6;
 import studio.ikara.commons.function.Tuple7;
 import studio.ikara.commons.function.Tuple8;
 import studio.ikara.commons.function.Tuples;
-
-import java.io.IOException;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TupleSerializationModule extends SimpleModule {
 

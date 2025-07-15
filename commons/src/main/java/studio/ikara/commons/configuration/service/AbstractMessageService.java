@@ -1,13 +1,12 @@
 package studio.ikara.commons.configuration.service;
 
-import studio.ikara.commons.exception.GenericException;
-import studio.ikara.commons.util.StringFormatter;
-
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import studio.ikara.commons.exception.GenericException;
+import studio.ikara.commons.util.StringFormatter;
 
 public abstract class AbstractMessageService {
 
