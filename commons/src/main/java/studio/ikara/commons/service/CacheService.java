@@ -22,7 +22,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import studio.ikara.commons.thread.VirtualThreadExecutor;
-import studio.ikara.commons.thread.VirtualThreadWrapper;
 
 @Service
 public class CacheService extends RedisPubSubAdapter<String, String> {
@@ -60,7 +59,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evict(String cName, String key) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadWrapper.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
 
         String cacheName = this.redisPrefix + "-" + cName;
 
@@ -74,7 +73,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
             return publishFuture.thenCompose(evicted -> deleteFuture);
         }
 
-        return VirtualThreadWrapper.fromCallable(() -> this.caffineCacheEvict(cacheName, key))
+        return VirtualThreadExecutor.async(() -> this.caffineCacheEvict(cacheName, key))
                 .exceptionally(t -> false);
     }
 
@@ -85,22 +84,22 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evict(String cacheName, Object... keys) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadWrapper.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
 
         return makeKey(keys).thenCompose(e -> this.evict(cacheName, e));
     }
 
     public CompletableFuture<String> makeKey(Object... args) {
-        if (args.length == 1) return VirtualThreadWrapper.just(args[0].toString());
+        if (args.length == 1) return VirtualThreadExecutor.just(args[0].toString());
 
-        return VirtualThreadWrapper.fromCallable(() -> Arrays.stream(args)
+        return VirtualThreadExecutor.async(() -> Arrays.stream(args)
                 .filter(Objects::nonNull)
                 .map(Object::toString)
                 .collect(Collectors.joining()));
     }
 
     public <T> CompletableFuture<T> put(String cName, T value, Object... keys) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadWrapper.just(value);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(value);
 
         String cacheName = this.redisPrefix + "-" + cName;
 
@@ -110,14 +109,14 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
             Cache cache = this.cacheManager.getCache(cacheName);
             if (cache != null) cache.put(key, co);
 
-            if (redisAsyncCommand == null) return VirtualThreadWrapper.just(true);
+            if (redisAsyncCommand == null) return VirtualThreadExecutor.just(true);
 
             return CompletableFuture.completedFuture(redisAsyncCommand.hset(cacheName, key, co))
                     .thenApply(cObject -> true)
                     .exceptionally(ex -> true);
         });
 
-        return VirtualThreadWrapper.just(value);
+        return VirtualThreadExecutor.just(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -188,7 +187,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evictAll(String cName) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadWrapper.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
 
         String cacheName = this.redisPrefix + "-" + cName;
 
@@ -203,7 +202,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
             return publishFuture.thenCompose(evicted -> deleteFuture);
         }
 
-        return VirtualThreadWrapper.fromCallable(() -> {
+        return VirtualThreadExecutor.async(() -> {
                     this.cacheManager.getCache(cacheName).clear();
                     return true;
                 })
@@ -211,11 +210,11 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evictAllCaches() {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadWrapper.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
 
         if (pubAsyncCommand != null) {
             return CompletableFuture.completedFuture(redisAsyncCommand.keys(this.redisPrefix + "-*"))
-                    .thenCompose(keysFuture -> VirtualThreadWrapper.fromCallable(() -> {
+                    .thenCompose(keysFuture -> VirtualThreadExecutor.async(() -> {
                                 try {
                                     List<String> keys = keysFuture.get();
                                     List<CompletableFuture<Boolean>> futures = new ArrayList<>();
@@ -246,7 +245,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
                     .thenApply(results -> results.stream().allMatch(Boolean::booleanValue));
         }
 
-        return VirtualThreadWrapper.fromCallable(() -> {
+        return VirtualThreadExecutor.async(() -> {
             Collection<String> cacheNames = this.cacheManager.getCacheNames();
             boolean result = true;
 
@@ -264,7 +263,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Collection<String>> getCacheNames() {
-        return VirtualThreadWrapper.just(this.cacheManager.getCacheNames().stream()
+        return VirtualThreadExecutor.just(this.cacheManager.getCacheNames().stream()
                 .map(e -> e.substring(this.redisPrefix.length() + 1))
                 .toList());
     }
