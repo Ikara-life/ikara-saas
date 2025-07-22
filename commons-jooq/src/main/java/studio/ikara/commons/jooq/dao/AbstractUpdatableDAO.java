@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.UpdatableRecord;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import studio.ikara.commons.model.dto.AbstractUpdatableDTO;
 import studio.ikara.commons.thread.VirtualThreadExecutor;

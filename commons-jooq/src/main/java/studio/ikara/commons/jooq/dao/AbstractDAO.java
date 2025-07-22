@@ -29,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import studio.ikara.commons.configuration.service.AbstractMessageService;
 import studio.ikara.commons.exception.GenericException;
@@ -43,12 +42,12 @@ import studio.ikara.commons.model.condition.FilterConditionOperator;
 import studio.ikara.commons.model.dto.AbstractDTO;
 import studio.ikara.commons.thread.VirtualThreadExecutor;
 
+@Getter
 @Transactional
 public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serializable, D extends AbstractDTO<I, I>> {
 
     private static final String OBJECT_NOT_FOUND = AbstractMessageService.OBJECT_NOT_FOUND;
 
-    @Getter
     protected final Class<D> pojoClass;
 
     protected final Logger logger;

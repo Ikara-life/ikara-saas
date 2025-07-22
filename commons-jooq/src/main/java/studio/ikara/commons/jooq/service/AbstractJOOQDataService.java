@@ -1,5 +1,8 @@
 package studio.ikara.commons.jooq.service;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.jooq.UpdatableRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +14,6 @@ import studio.ikara.commons.jooq.dao.AbstractDAO;
 import studio.ikara.commons.model.condition.AbstractCondition;
 import studio.ikara.commons.model.dto.AbstractDTO;
 import studio.ikara.commons.thread.VirtualThreadExecutor;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public abstract class AbstractJOOQDataService<

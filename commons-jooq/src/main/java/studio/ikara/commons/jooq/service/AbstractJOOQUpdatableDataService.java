@@ -1,14 +1,12 @@
 package studio.ikara.commons.jooq.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-
 import org.jooq.UpdatableRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,10 +19,10 @@ import studio.ikara.commons.thread.VirtualThreadExecutor;
 
 @Service
 public abstract class AbstractJOOQUpdatableDataService<
-        R extends UpdatableRecord<R>,
-        I extends Serializable,
-        D extends AbstractUpdatableDTO<I, I>,
-        O extends AbstractUpdatableDAO<R, I, D>>
+                R extends UpdatableRecord<R>,
+                I extends Serializable,
+                D extends AbstractUpdatableDTO<I, I>,
+                O extends AbstractUpdatableDAO<R, I, D>>
         extends AbstractJOOQDataService<R, I, D, O> {
 
     private ObjectMapper objectMapper;
@@ -49,7 +47,7 @@ public abstract class AbstractJOOQUpdatableDataService<
                             method.invoke(retrievedObject, this.objectMapper.convertValue(value, params[0].getType()));
                         }
                     }
-                } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException _) {
+                } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException exception) {
                     throw new GenericException(
                             HttpStatus.BAD_REQUEST, field + AbstractMessageService.FIELD_NOT_AVAILABLE);
                 }
