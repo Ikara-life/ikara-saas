@@ -33,6 +33,14 @@ jobs:
         working-directory: ./commons
         run: mvn clean install
 
+      - name: Build commons-jooq JAR
+        working-directory: ./commons-jooq
+        run: mvn clean install
+
+      - name: Build commons-security JAR
+        working-directory: ./commons-security
+        run: mvn clean install
+
       - name: Build config JAR
         working-directory: ./config
         run: mvn clean install
