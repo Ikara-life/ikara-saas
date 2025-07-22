@@ -3,15 +3,14 @@ package studio.ikara.commons.jooq.jackson;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import studio.ikara.commons.configuration.service.AbstractMessageService;
-import studio.ikara.commons.exception.GenericException;
-import org.jooq.types.UNumber;
-import org.springframework.http.HttpStatus;
-
 import java.io.IOException;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.jooq.types.UNumber;
+import org.springframework.http.HttpStatus;
+import studio.ikara.commons.configuration.service.AbstractMessageService;
+import studio.ikara.commons.exception.GenericException;
 
 public class UNumberDeserializer<R extends UNumber> extends StdDeserializer<R> {
 

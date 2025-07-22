@@ -1,14 +1,6 @@
 package studio.ikara.commons.jooq.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import studio.ikara.commons.configuration.service.AbstractMessageService;
-import studio.ikara.commons.exception.GenericException;
-import studio.ikara.commons.model.dto.AbstractUpdatableDTO;
-import studio.ikara.commons.thread.VirtualThreadExecutor;
-import studio.ikara.core.commons.jooq.dao.AbstractUpdatableDAO;
-import org.jooq.UpdatableRecord;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -17,15 +9,30 @@ import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.jooq.UpdatableRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import studio.ikara.commons.configuration.service.AbstractMessageService;
+import studio.ikara.commons.exception.GenericException;
+import studio.ikara.commons.jooq.dao.AbstractUpdatableDAO;
+import studio.ikara.commons.model.dto.AbstractUpdatableDTO;
+import studio.ikara.commons.thread.VirtualThreadExecutor;
+
+@Service
 public abstract class AbstractJOOQUpdatableDataService<
-                R extends UpdatableRecord<R>,
-                I extends Serializable,
-                D extends AbstractUpdatableDTO<I, I>,
-                O extends AbstractUpdatableDAO<R, I, D>>
+        R extends UpdatableRecord<R>,
+        I extends Serializable,
+        D extends AbstractUpdatableDTO<I, I>,
+        O extends AbstractUpdatableDAO<R, I, D>>
         extends AbstractJOOQDataService<R, I, D, O> {
 
-    @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public CompletableFuture<D> update(I key, Map<String, Object> fields) {
         return VirtualThreadExecutor.async(() -> {
@@ -42,7 +49,7 @@ public abstract class AbstractJOOQUpdatableDataService<
                             method.invoke(retrievedObject, this.objectMapper.convertValue(value, params[0].getType()));
                         }
                     }
-                } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException exception) {
+                } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException _) {
                     throw new GenericException(
                             HttpStatus.BAD_REQUEST, field + AbstractMessageService.FIELD_NOT_AVAILABLE);
                 }
@@ -52,7 +59,7 @@ public abstract class AbstractJOOQUpdatableDataService<
         });
     }
 
-        public CompletableFuture<D> update(D entity) {
+    public CompletableFuture<D> update(D entity) {
         return VirtualThreadExecutor.async(() -> {
             D updatableEntity = this.updatableEntity(entity).join();
             I userId = this.getLoggedInUserId().join();

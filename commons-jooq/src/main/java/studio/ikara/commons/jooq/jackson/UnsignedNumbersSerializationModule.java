@@ -1,12 +1,11 @@
 package studio.ikara.commons.jooq.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import studio.ikara.commons.configuration.service.AbstractMessageService;
+import java.io.Serial;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
 import org.jooq.types.UShort;
-
-import java.io.Serial;
+import studio.ikara.commons.configuration.service.AbstractMessageService;
 
 public class UnsignedNumbersSerializationModule extends SimpleModule {
 

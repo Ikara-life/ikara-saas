@@ -1,16 +1,16 @@
 package studio.ikara.commons.jooq.dao;
 
-import studio.ikara.commons.model.dto.AbstractUpdatableDTO;
-import studio.ikara.commons.thread.VirtualThreadExecutor;
-import org.jooq.Field;
-import org.jooq.Table;
-import org.jooq.UpdatableRecord;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import org.jooq.Field;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import studio.ikara.commons.model.dto.AbstractUpdatableDTO;
+import studio.ikara.commons.thread.VirtualThreadExecutor;
 
 @Transactional
 public abstract class AbstractUpdatableDAO<
@@ -44,6 +44,7 @@ public abstract class AbstractUpdatableDAO<
         });
     }
 
+    @SuppressWarnings("unchecked")
     public CompletableFuture<D> update(I id, Map<String, Object> updateFields) {
         return VirtualThreadExecutor.async(() -> {
             updateFields.remove("createdAt");

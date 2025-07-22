@@ -4,15 +4,14 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import org.jooq.types.UNumber;
-import org.springframework.http.HttpStatus;
-import studio.ikara.commons.exception.GenericException;
-
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.jooq.types.UNumber;
+import org.springframework.http.HttpStatus;
+import studio.ikara.commons.exception.GenericException;
 
 public class UNumberAdapter<R extends UNumber> extends TypeAdapter<R> implements Serializable {
 

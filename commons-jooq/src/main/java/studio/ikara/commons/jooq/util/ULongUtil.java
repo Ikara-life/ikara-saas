@@ -1,8 +1,7 @@
 package studio.ikara.commons.jooq.util;
 
-import org.jooq.types.ULong;
-
 import java.math.BigInteger;
+import org.jooq.types.ULong;
 
 public class ULongUtil {
 

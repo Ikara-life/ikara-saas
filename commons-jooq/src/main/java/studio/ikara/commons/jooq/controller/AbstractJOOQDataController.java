@@ -1,12 +1,7 @@
 package studio.ikara.commons.jooq.controller;
 
-import studio.ikara.commons.jooq.dao.AbstractDAO;
-import studio.ikara.commons.jooq.service.AbstractJOOQDataService;
-import studio.ikara.commons.model.Query;
-import studio.ikara.commons.model.condition.AbstractCondition;
-import studio.ikara.commons.model.dto.AbstractDTO;
-import studio.ikara.commons.thread.VirtualThreadExecutor;
-import studio.ikara.commons.util.ConditionUtil;
+import java.io.Serializable;
+import java.util.concurrent.CompletableFuture;
 import org.jooq.UpdatableRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.io.Serializable;
-import java.util.concurrent.CompletableFuture;
+import studio.ikara.commons.jooq.dao.AbstractDAO;
+import studio.ikara.commons.jooq.service.AbstractJOOQDataService;
+import studio.ikara.commons.model.Query;
+import studio.ikara.commons.model.condition.AbstractCondition;
+import studio.ikara.commons.model.dto.AbstractDTO;
+import studio.ikara.commons.thread.VirtualThreadExecutor;
+import studio.ikara.commons.util.ConditionUtil;
 
 public abstract class AbstractJOOQDataController<
         R extends UpdatableRecord<R>,
@@ -69,9 +68,7 @@ public abstract class AbstractJOOQDataController<
     @PostMapping(PATH_QUERY)
     public CompletableFuture<ResponseEntity<Page<D>>> readPageFilter(@RequestBody Query query) {
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), query.getSort());
-        return this.service
-                .readPageFilter(pageable, query.getCondition())
-                .thenApply(ResponseEntity::ok);
+        return this.service.readPageFilter(pageable, query.getCondition()).thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping(PATH_ID)

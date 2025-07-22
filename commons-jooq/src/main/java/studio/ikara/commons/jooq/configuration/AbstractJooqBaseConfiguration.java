@@ -3,24 +3,23 @@ package studio.ikara.commons.jooq.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.jooq.types.UInteger;
-import org.jooq.types.ULong;
-import org.jooq.types.UShort;
-import studio.ikara.commons.configuration.AbstractBaseConfiguration;
-import studio.ikara.commons.configuration.service.AbstractMessageService;
+import java.util.List;
 import lombok.Getter;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.jooq.types.UInteger;
+import org.jooq.types.ULong;
+import org.jooq.types.UShort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import studio.ikara.commons.configuration.AbstractBaseConfiguration;
+import studio.ikara.commons.configuration.service.AbstractMessageService;
 import studio.ikara.commons.jooq.gson.UNumberAdapter;
 import studio.ikara.commons.jooq.gson.UNumberListAdapter;
 import studio.ikara.commons.jooq.jackson.UnsignedNumbersSerializationModule;
-
-import java.util.List;
 
 @Getter
 public abstract class AbstractJooqBaseConfiguration extends AbstractBaseConfiguration {

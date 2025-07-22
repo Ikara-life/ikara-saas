@@ -1,16 +1,13 @@
 package studio.ikara.commons.jooq.dao;
 
-import studio.ikara.commons.configuration.service.AbstractMessageService;
-import studio.ikara.commons.exception.GenericException;
-import studio.ikara.commons.function.Tuple2;
-import studio.ikara.commons.function.Tuples;
-import studio.ikara.commons.model.condition.AbstractCondition;
-import studio.ikara.commons.model.condition.ComplexCondition;
-import studio.ikara.commons.model.condition.ComplexConditionOperator;
-import studio.ikara.commons.model.condition.FilterCondition;
-import studio.ikara.commons.model.condition.FilterConditionOperator;
-import studio.ikara.commons.model.dto.AbstractDTO;
-import studio.ikara.commons.thread.VirtualThreadExecutor;
+import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -33,17 +30,20 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import studio.ikara.commons.configuration.service.AbstractMessageService;
+import studio.ikara.commons.exception.GenericException;
+import studio.ikara.commons.function.Tuple2;
+import studio.ikara.commons.function.Tuples;
+import studio.ikara.commons.model.condition.AbstractCondition;
+import studio.ikara.commons.model.condition.ComplexCondition;
+import studio.ikara.commons.model.condition.ComplexConditionOperator;
+import studio.ikara.commons.model.condition.FilterCondition;
+import studio.ikara.commons.model.condition.FilterConditionOperator;
+import studio.ikara.commons.model.dto.AbstractDTO;
+import studio.ikara.commons.thread.VirtualThreadExecutor;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-@Component
+@Transactional
 public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serializable, D extends AbstractDTO<I, I>> {
 
     private static final String OBJECT_NOT_FOUND = AbstractMessageService.OBJECT_NOT_FOUND;
