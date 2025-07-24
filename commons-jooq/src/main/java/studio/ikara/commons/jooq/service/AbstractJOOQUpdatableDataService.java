@@ -33,7 +33,7 @@ public abstract class AbstractJOOQUpdatableDataService<
     }
 
     public CompletableFuture<D> update(I key, Map<String, Object> fields) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             D retrievedObject = this.read(key).join();
             Class<D> pojoClass = this.dao.getPojoClass();
 
@@ -58,7 +58,7 @@ public abstract class AbstractJOOQUpdatableDataService<
     }
 
     public CompletableFuture<D> update(D entity) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             D updatableEntity = this.updatableEntity(entity).join();
             I userId = this.getLoggedInUserId().join();
 

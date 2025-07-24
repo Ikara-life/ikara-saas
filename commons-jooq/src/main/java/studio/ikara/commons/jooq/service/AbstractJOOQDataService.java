@@ -36,7 +36,7 @@ public abstract class AbstractJOOQDataService<
     }
 
     public CompletableFuture<D> create(D entity) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             entity.setCreatedBy(null);
             return getLoggedInUserId()
                     .thenApply(userId -> {

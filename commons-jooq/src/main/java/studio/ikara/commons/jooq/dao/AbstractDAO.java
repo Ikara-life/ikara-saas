@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 import lombok.Getter;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -68,7 +69,7 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
     }
 
     public CompletableFuture<Page<D>> readPage(Pageable pageable) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             Tuple2<SelectJoinStep<org.jooq.Record>, SelectJoinStep<Record1<Integer>>> selectJoinStepTuple =
                     getSelectJointStep();
             return list(pageable, selectJoinStepTuple);
@@ -77,7 +78,7 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
 
     @SuppressWarnings("unchecked")
     public CompletableFuture<Page<D>> readPageFilter(Pageable pageable, AbstractCondition condition) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             Tuple2<SelectJoinStep<org.jooq.Record>, SelectJoinStep<Record1<Integer>>> selectJoinStepTuple =
                     getSelectJointStep();
             Condition filterCondition = filter(condition);
@@ -119,7 +120,7 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
     }
 
     public CompletableFuture<List<D>> readAll(AbstractCondition query) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             SelectJoinStep<org.jooq.Record> selectJoinStep =
                     getSelectJointStep().getT1();
             Condition condition = filter(query);
@@ -129,11 +130,11 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
     }
 
     public CompletableFuture<D> readById(I id) {
-        return VirtualThreadExecutor.async(() -> this.getRecordById(id).into(this.pojoClass));
+        return VirtualThreadExecutor.supplyAsync(() -> this.getRecordById(id).into(this.pojoClass));
     }
 
     public CompletableFuture<D> create(D pojo) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             pojo.setId(null);
 
             return dslContext.transactionResult(ctx -> {
@@ -158,7 +159,7 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
     }
 
     public CompletableFuture<Integer> delete(I id) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             DeleteQuery<R> query = dslContext.deleteQuery(table);
             query.addConditions(idField.eq(id));
             return query.execute();

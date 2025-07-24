@@ -59,7 +59,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evict(String cName, String key) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.completedFuture(true);
 
         String cacheName = this.redisPrefix + "-" + cName;
 
@@ -73,7 +73,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
             return publishFuture.thenCompose(evicted -> deleteFuture);
         }
 
-        return VirtualThreadExecutor.async(() -> this.caffineCacheEvict(cacheName, key))
+        return VirtualThreadExecutor.supplyAsync(() -> this.caffineCacheEvict(cacheName, key))
                 .exceptionally(t -> false);
     }
 
@@ -84,22 +84,22 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evict(String cacheName, Object... keys) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.completedFuture(true);
 
         return makeKey(keys).thenCompose(e -> this.evict(cacheName, e));
     }
 
     public CompletableFuture<String> makeKey(Object... args) {
-        if (args.length == 1) return VirtualThreadExecutor.just(args[0].toString());
+        if (args.length == 1) return VirtualThreadExecutor.completedFuture(args[0].toString());
 
-        return VirtualThreadExecutor.async(() -> Arrays.stream(args)
+        return VirtualThreadExecutor.supplyAsync(() -> Arrays.stream(args)
                 .filter(Objects::nonNull)
                 .map(Object::toString)
                 .collect(Collectors.joining()));
     }
 
     public <T> CompletableFuture<T> put(String cName, T value, Object... keys) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(value);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.completedFuture(value);
 
         String cacheName = this.redisPrefix + "-" + cName;
 
@@ -109,14 +109,14 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
             Cache cache = this.cacheManager.getCache(cacheName);
             if (cache != null) cache.put(key, co);
 
-            if (redisAsyncCommand == null) return VirtualThreadExecutor.just(true);
+            if (redisAsyncCommand == null) return VirtualThreadExecutor.completedFuture(true);
 
             return CompletableFuture.completedFuture(redisAsyncCommand.hset(cacheName, key, co))
                     .thenApply(cObject -> true)
                     .exceptionally(ex -> true);
         });
 
-        return VirtualThreadExecutor.just(value);
+        return VirtualThreadExecutor.completedFuture(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -187,7 +187,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evictAll(String cName) {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.completedFuture(true);
 
         String cacheName = this.redisPrefix + "-" + cName;
 
@@ -202,7 +202,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
             return publishFuture.thenCompose(evicted -> deleteFuture);
         }
 
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
                     this.cacheManager.getCache(cacheName).clear();
                     return true;
                 })
@@ -210,11 +210,11 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Boolean> evictAllCaches() {
-        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.just(true);
+        if (this.cacheType == CacheType.NONE) return VirtualThreadExecutor.completedFuture(true);
 
         if (pubAsyncCommand != null) {
             return CompletableFuture.completedFuture(redisAsyncCommand.keys(this.redisPrefix + "-*"))
-                    .thenCompose(keysFuture -> VirtualThreadExecutor.async(() -> {
+                    .thenCompose(keysFuture -> VirtualThreadExecutor.supplyAsync(() -> {
                                 try {
                                     List<String> keys = keysFuture.get();
                                     List<CompletableFuture<Boolean>> futures = new ArrayList<>();
@@ -245,7 +245,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
                     .thenApply(results -> results.stream().allMatch(Boolean::booleanValue));
         }
 
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             Collection<String> cacheNames = this.cacheManager.getCacheNames();
             boolean result = true;
 
@@ -263,7 +263,7 @@ public class CacheService extends RedisPubSubAdapter<String, String> {
     }
 
     public CompletableFuture<Collection<String>> getCacheNames() {
-        return VirtualThreadExecutor.just(this.cacheManager.getCacheNames().stream()
+        return VirtualThreadExecutor.completedFuture(this.cacheManager.getCacheNames().stream()
                 .map(e -> e.substring(this.redisPrefix.length() + 1))
                 .toList());
     }

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
+        <!-- lookup parent from repository -->
     </parent>
     <groupId>studio.ikara</groupId>
     <artifactId>commons-security</artifactId>
@@ -27,18 +30,164 @@
         <url/>
     </scm>
     <properties>
+        <base.package>studio.ikara</base.package>
+        <env.ENVIRONMENT>dev</env.ENVIRONMENT>
         <java.version>24</java.version>
+        <!-- Dependency versions -->
+        <main.java.dir>src/main/java</main.java.dir>
+        <palantir-java.format.version>2.67.0</palantir-java.format.version>
+        <spotless.version>2.44.5</spotless.version>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <test.java.dir>src/test/java</test.java.dir>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>studio.ikara</groupId>
+            <artifactId>commons</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <!-- or jjwt-gson if Gson is preferred -->
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>spotless</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.diffplug.spotless</groupId>
+                        <artifactId>spotless-maven-plugin</artifactId>
+                        <version>${spotless.version}</version>
+                        <configuration>
+                            <java>
+                                <includes>
+                                    <include>${main.java.dir}/**/*.java</include>
+                                    <include>${test.java.dir}/**/*.java</include>
+                                </includes>
+                                <palantirJavaFormat>
+                                    <version>${palantir-java.format.version}</version>
+                                    <style>PALANTIR</style>
+                                </palantirJavaFormat>
+                                <importOrder/>
+                                <removeUnusedImports/>
+                                <formatAnnotations/>
+                                <trimTrailingWhitespace/>
+                                <endWithNewline/>
+                                <toggleOffOn/>
+                            </java>
+                            <pom>
+                                <includes>
+                                    <include>pom.xml</include>
+                                </includes>
+                                <sortPom>
+                                    <encoding>UTF-8</encoding>
+                                    <endWithNewline>true</endWithNewline>
+                                    <expandEmptyElements>false</expandEmptyElements>
+                                    <indentAttribute>all</indentAttribute>
+                                    <keepBlankLines>false</keepBlankLines>
+                                    <nrOfIndentSpace>4</nrOfIndentSpace>
+                                    <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                                    <sortDependencyExclusions>groupId,artifactId</sortDependencyExclusions>
+                                    <sortDependencyManagement>groupId,artifactId</sortDependencyManagement>
+                                    <sortExecutions>false</sortExecutions>
+                                    <sortModules>true</sortModules>
+                                    <sortPlugins>groupId,artifactId</sortPlugins>
+                                    <sortProperties>true</sortProperties>
+                                </sortPom>
+                            </pom>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.diffplug.spotless</groupId>
+                                <artifactId>spotless-maven-plugin</artifactId>
+                                <version>${spotless.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.palantir.javaformat</groupId>
+                                <artifactId>palantir-java-format</artifactId>
+                                <version>${palantir-java.format.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                    <goal>apply</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

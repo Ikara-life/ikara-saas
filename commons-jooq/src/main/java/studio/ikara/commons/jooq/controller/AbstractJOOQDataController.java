@@ -51,7 +51,7 @@ public abstract class AbstractJOOQDataController<
 
     @GetMapping(PATH_ID)
     public CompletableFuture<ResponseEntity<D>> read(@PathVariable(PATH_VARIABLE_ID) final I id) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             D result = this.service.read(id).join();
             return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
         });

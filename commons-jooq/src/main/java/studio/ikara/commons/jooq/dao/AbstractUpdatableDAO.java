@@ -26,7 +26,7 @@ public abstract class AbstractUpdatableDAO<
     }
 
     public <A extends AbstractUpdatableDTO<I, I>> CompletableFuture<D> update(A entity) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             entity.setUpdatedAt(null);
             UpdatableRecord<R> rec = this.dslContext.newRecord(this.table);
             rec.from(entity);
@@ -45,7 +45,7 @@ public abstract class AbstractUpdatableDAO<
 
     @SuppressWarnings("unchecked")
     public CompletableFuture<D> update(I id, Map<String, Object> updateFields) {
-        return VirtualThreadExecutor.async(() -> {
+        return VirtualThreadExecutor.supplyAsync(() -> {
             updateFields.remove("createdAt");
 
             Map<Field<?>, Object> fields = updateFields.entrySet().stream()
