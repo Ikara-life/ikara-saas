@@ -94,9 +94,9 @@ jobs:
           docker push $IMAGE_NAME:latest
 
       - name: Build and Push Security Image
-        working-directory: Security
+        working-directory: security
         run: |
-          IMAGE_NAME=${{ env.GHCR_REPO }}/Security
+          IMAGE_NAME=${{ env.GHCR_REPO }}/security
           docker build -t $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} .
           docker push $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }}
           docker tag $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} $IMAGE_NAME:latest
