@@ -49,6 +49,10 @@ jobs:
         working-directory: ./eureka
         run: mvn clean install
 
+      - name: Build security JAR
+        working-directory: ./security
+        run: mvn clean install
+
       - name: Build core JAR
         working-directory: ./core
         run: mvn clean install
@@ -84,6 +88,15 @@ jobs:
         working-directory: eureka
         run: |
           IMAGE_NAME=${{ env.GHCR_REPO }}/eureka
+          docker build -t $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} .
+          docker push $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }}
+          docker tag $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
+
+      - name: Build and Push Security Image
+        working-directory: Security
+        run: |
+          IMAGE_NAME=${{ env.GHCR_REPO }}/Security
           docker build -t $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} .
           docker push $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }}
           docker tag $IMAGE_NAME:${{ steps.dockerVersion.outputs.VERSION }} $IMAGE_NAME:latest
