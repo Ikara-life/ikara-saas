@@ -2,8 +2,7 @@ package studio.ikara.security.enums;
 
 import org.jooq.EnumType;
 import org.jooq.Schema;
-
-import io.j13n.core.jooq.core.Core;
+import studio.ikara.security.jooq.public_.Public;
 
 public enum UserStatusCode implements EnumType {
     ACTIVE("ACTIVE"),
@@ -33,12 +32,12 @@ public enum UserStatusCode implements EnumType {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return Public.PUBLIC;
     }
 
     @Override
     public String getName() {
-        return "core.user_status_code";
+        return "security_user_status_code";
     }
 
     public Boolean isActive() {

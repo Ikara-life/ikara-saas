@@ -25,21 +25,4 @@ spring:
         - id: core
           uri: lb://core
           predicates:
-            - Path=/api/core/**, /*/api/core/**, /*/*/api/core/**, /*/*/*/api/core/**, /*/*/*/*/api/core/**, /*/*/*/*/*/api/core/**, /*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/*/api/core/**,
-google:
-  api:
-    key: "${GOOGLE_API_KEY:123124214}"
-  cse:
-    id: "${GOOGLE_CSE_ID:12341242143}"
-tavily:
-  api:
-    key: "${TAVILY_API_KEY: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}"
-openai:
-  api:
-    key: "${OPENAI_API_KEY:1203i12094129034}"
-    model: gpt-4-turbo-preview
-    temperature: 0.3
-    max-tokens: 1000
-jwt:
-  secret: "${JWT_SECRET:j13nSecretKeyForJWTTokenGenerationAndVerificationPurposes}"
-  expiration: 86400000
+            - Path=/api/core/**, /*/api/core/**, /*/*/api/core/**, /*/*/*/api/core/**, /*/*/*/*/api/core/**, /*/*/*/*/*/api/core/**, /*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/*/api/core/**

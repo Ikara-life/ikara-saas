@@ -1,3 +1,11 @@
+security:
+  db:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: Vishwas123#
+    flyway:
+      url: jdbc:postgresql://localhost:5432/postgres
+
 core:
   db:
     url: jdbc:postgresql://localhost:5432/postgres

@@ -8,7 +8,11 @@ spring:
         - id: core
           uri: lb://core
           predicates:
-            - Path=/api/core/**, /*/api/core/**, /*/*/api/core/**, /*/*/*/api/core/**, /*/*/*/*/api/core/**, /*/*/*/*/*/api/core/**, /*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**,
+            - Path=/api/core/**, /*/api/core/**, /*/*/api/core/**, /*/*/*/api/core/**, /*/*/*/*/api/core/**, /*/*/*/*/*/api/core/**, /*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**, /*/*/*/*/*/*/*/*/api/core/**
+        - id: security
+          uri: lb://security
+          predicates:
+            - Path=/api/security/**, /*/api/security/**, /*/*/api/security/**, /*/*/*/api/security/**, /*/*/*/*/api/security/**, /*/*/*/*/*/api/security/**, /*/*/*/*/*/*/api/security/**, /*/*/*/*/*/*/*/api/security/**, /*/*/*/*/*/*/*/*/api/security/**, /*/*/*/*/*/*/*/*/api/security/**
   boot:
     admin:
       client:

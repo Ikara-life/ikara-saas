@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
+        <!-- lookup parent from repository -->
     </parent>
     <groupId>studio.ikara</groupId>
     <artifactId>security</artifactId>
@@ -29,7 +32,7 @@
     <properties>
         <base.package>studio.ikara</base.package>
         <base.package.dir>studio/ikara</base.package.dir>
-        <database.db.name>postgres</database.db.name>
+        <database.db.name>ikara</database.db.name>
         <database.schema.name>security</database.schema.name>
         <env.ENVIRONMENT>dev</env.ENVIRONMENT>
         <java.version>24</java.version>
@@ -50,7 +53,7 @@
         <postgresql.jdbc.password>Vishwas123#</postgresql.jdbc.password>
         <postgresql.jdbc.url>jdbc:postgresql://localhost:5432/${database.db.name}</postgresql.jdbc.url>
         <postgresql.jdbc.user>postgres</postgresql.jdbc.user>
-        <postgresql.version>42.7.2</postgresql.version>
+        <postgresql.version>42.7.7</postgresql.version>
         <resources.dir>src/main/resources</resources.dir>
         <server.package>security</server.package>
         <server.package.dir>security</server.package.dir>
@@ -89,6 +92,11 @@
             <groupId>org.jooq</groupId>
             <artifactId>jooq-postgres-extensions</artifactId>
             <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -163,12 +171,12 @@
         </dependency>
         <dependency>
             <groupId>studio.ikara</groupId>
-            <artifactId>commons-security</artifactId>
+            <artifactId>commons-jooq</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>studio.ikara</groupId>
-            <artifactId>commons-jooq</artifactId>
+            <artifactId>commons-security</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -261,6 +269,15 @@
                                             <inputSchema>public</inputSchema>
                                         </schema>
                                     </schemata>
+                                    <forcedTypes>
+                                        <forcedType>
+                                            <name>USER_STATUS_CODE</name>
+                                            <userType>studio.ikara.security.enums.UserStatusCode</userType>
+                                            <includeExpression>.*\.USER_STATUS_CODE</includeExpression>
+                                            <includeTypes>.*</includeTypes>
+                                            <enumConverter>true</enumConverter>
+                                        </forcedType>
+                                    </forcedTypes>
                                     <forcedTypes/>
                                 </database>
                                 <generate>
