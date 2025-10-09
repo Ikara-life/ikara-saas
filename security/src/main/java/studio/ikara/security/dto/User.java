@@ -2,7 +2,7 @@ package studio.ikara.security.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Set;
 import lombok.Data;
