@@ -37,6 +37,9 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
     private Short noFailedAttempt;
     private Set<String> authorities;
 
+    private boolean isCoach;
+    private String coachId;
+
     public String getUserName() {
         return PLACEHOLDER.equals(this.userName) ? null : this.userName;
     }
@@ -88,6 +91,8 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
                 .setPassword(getPassword())
                 .setPasswordHashed(isPasswordHashed())
                 .setNoFailedAttempt(getNoFailedAttempt())
-                .setStringAuthorities(authorities != null ? List.copyOf(authorities) : null);
+                .setStringAuthorities(authorities != null ? List.copyOf(authorities) : null)
+                .setCoach(isCoach)
+                .setCoachId(coachId);
     }
 }
