@@ -1,65 +1,60 @@
 package studio.ikara.commons.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import lombok.Builder;
-import studio.ikara.commons.function.Tuple2;
-import studio.ikara.commons.function.Tuples;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
+@Slf4j
+@Component
 public class JWTUtil {
 
-    private JWTUtil() {}
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final long EXPIRATION_MILLIS = 3600_000;
 
-    public static Tuple2<String, LocalDateTime> generateToken(JWTGenerateTokenParameters params) {
+    public String generateToken(ContextUser contextUser, String hostName, String port) {
+        Map<String, Object> claims = Map.ofEntries(
+                Map.entry("userId", contextUser.getId()),
+                Map.entry("hostName", hostName),
+                Map.entry("port", port),
+                Map.entry("isCoach", contextUser.isCoach()),
+                Map.entry("coachId", contextUser.getCoachId())
+        );
 
-        LocalDateTime expirationTime = LocalDateTime.now(ZoneId.of("UTC")).plusMinutes(params.expiryInMin);
-
-        return Tuples.of(
-                Jwts.builder()
-                        .issuer("aplygen")
-                        .subject(params.userId.toString())
-                        .claims(new JWTClaims()
-                                .setUserId(params.userId)
-                                .setHostName(params.host)
-                                .setPort(params.port)
-                                .setOneTime(params.oneTime)
-                                .getClaimsMap())
-                        .issuedAt(Date.from(Instant.now()))
-                        .expiration(Date.from(Instant.now().plus(params.expiryInMin, ChronoUnit.MINUTES)))
-                        .signWith(Keys.hmacShaKeyFor(params.secretKey.getBytes()), Jwts.SIG.HS512)
-                        .compact(),
-                expirationTime);
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plusMillis(EXPIRATION_MILLIS)))
+                .signWith(key)
+                .compact();
     }
 
-    public static JWTClaims getClaimsFromToken(String secretKey, String token) {
-
-        JwtParser parser = Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build();
-
-        Jws<Claims> parsed = parser.parseSignedClaims(token);
-
-        return JWTClaims.from(parsed);
+    public Jws<Claims> parseToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
     }
 
-    @Builder
-    public static class JWTGenerateTokenParameters {
+    public boolean isTokenValid(String token) {
+        try {
+            parseToken(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+            return false;
+        }
+    }
 
-        Long userId;
-        String secretKey;
-        Integer expiryInMin;
-        String host;
-        String port;
-
-        @Builder.Default
-        boolean oneTime = false;
+    public JWTClaims extractClaims(String token) {
+        try {
+            Jws<Claims> parsed = parseToken(token);
+            return JWTClaims.from(parsed);
+        } catch (JwtException e) {
+            log.error("Failed to extract claims from JWT: {}", e.getMessage());
+            return null;
+        }
     }
 }

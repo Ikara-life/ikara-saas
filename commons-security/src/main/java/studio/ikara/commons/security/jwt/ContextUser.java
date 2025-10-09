@@ -39,19 +39,19 @@ public class ContextUser implements Serializable {
     private String statusCode;
     private List<String> stringAuthorities;
 
+    private boolean isCoach;
+    private String coachId;
+
     @JsonIgnore
     private Set<SimpleGrantedAuthority> grantedAuthorities;
 
     @JsonIgnore
     public Collection<SimpleGrantedAuthority> getAuthorities() {
-
         if (this.stringAuthorities == null || this.stringAuthorities.isEmpty()) return Set.of();
-
         if (this.grantedAuthorities == null)
             this.grantedAuthorities = this.stringAuthorities.parallelStream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toSet());
-
         return this.grantedAuthorities;
     }
 

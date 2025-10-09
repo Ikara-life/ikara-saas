@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import studio.ikara.commons.exception.GenericException;
-import studio.ikara.commons.function.Tuple2;
 import studio.ikara.commons.security.jwt.ContextAuthentication;
 import studio.ikara.commons.security.jwt.ContextUser;
 import studio.ikara.commons.security.jwt.JWTClaims;
@@ -26,6 +25,8 @@ public class AuthenticationService implements IAuthenticationService {
 
     private final CacheService cacheService;
 
+    private final JWTUtil jwtUtil;
+
     @Value("${jwt.key:defaultSecretKey}")
     private String tokenKey;
 
@@ -35,9 +36,10 @@ public class AuthenticationService implements IAuthenticationService {
     @Value("${jwt.token.default.expiry:60}")
     private Integer defaultExpiryInMinutes;
 
-    public AuthenticationService(UserService userService, CacheService cacheService) {
+    public AuthenticationService(UserService userService, CacheService cacheService, JWTUtil jwtUtil) {
         this.userService = userService;
         this.cacheService = cacheService;
+        this.jwtUtil = jwtUtil;
     }
 
     public CompletableFuture<AuthenticationResponse> authenticate(
@@ -68,18 +70,14 @@ public class AuthenticationService implements IAuthenticationService {
         String host = request.getRemoteHost();
         String port = "" + request.getLocalPort();
 
-        Tuple2<String, LocalDateTime> token = JWTUtil.generateToken(JWTUtil.JWTGenerateTokenParameters.builder()
-                .userId(user.getId())
-                .secretKey(tokenKey)
-                .expiryInMin(timeInMinutes)
-                .host(host)
-                .port(port)
-                .build());
+        String token = jwtUtil.generateToken(user, host, port);
+
+        LocalDateTime expiryAt = LocalDateTime.now(ZoneId.of("UTC")).plusMinutes(timeInMinutes);
 
         return CompletableFuture.completedFuture(new AuthenticationResponse()
                 .setUser(user)
-                .setAccessToken(token.getT1())
-                .setAccessTokenExpiryAt(token.getT2()));
+                .setAccessToken(token)
+                .setAccessTokenExpiryAt(expiryAt));
     }
 
     @Override
@@ -98,7 +96,9 @@ public class AuthenticationService implements IAuthenticationService {
 
     private CompletableFuture<Authentication> extractAndValidateToken(String token, HttpServletRequest request) {
         try {
-            JWTClaims claims = JWTUtil.getClaimsFromToken(tokenKey, token);
+            JWTClaims claims = jwtUtil.extractClaims(token);
+            if (claims == null)
+                return CompletableFuture.completedFuture(new ContextAuthentication(null, false, null, null));
 
             String host = request.getRemoteHost();
             if (!host.equals(claims.getHostName()))
