@@ -52,11 +52,7 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
         return PLACEHOLDER.equals(this.phoneNumber) ? null : this.phoneNumber;
     }
 
-    public boolean checkIdentificationKeys() {
-        return (this.userName == null || PLACEHOLDER.equals(this.userName))
-                && (this.emailId == null || PLACEHOLDER.equals(this.emailId))
-                && (this.phoneNumber == null || PLACEHOLDER.equals(this.phoneNumber));
-    }
+
 
     @JsonIgnore
     public String getPassword() {
@@ -68,10 +64,6 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
         return this.passwordHashed;
     }
 
-    public User setAuthorities(Collection<String> authorities) {
-        this.authorities = authorities != null ? Set.copyOf(authorities) : null;
-        return this;
-    }
 
     @JsonIgnore
     public ContextUser toContextUser() {
