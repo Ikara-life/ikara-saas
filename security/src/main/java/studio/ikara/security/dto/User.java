@@ -2,7 +2,7 @@ package studio.ikara.security.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Set;
 import lombok.Data;
@@ -37,6 +37,9 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
     private Short noFailedAttempt;
     private Set<String> authorities;
 
+    private boolean isCoach;
+    private String coachId;
+
     public String getUserName() {
         return PLACEHOLDER.equals(this.userName) ? null : this.userName;
     }
@@ -49,11 +52,7 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
         return PLACEHOLDER.equals(this.phoneNumber) ? null : this.phoneNumber;
     }
 
-    public boolean checkIdentificationKeys() {
-        return (this.userName == null || PLACEHOLDER.equals(this.userName))
-                && (this.emailId == null || PLACEHOLDER.equals(this.emailId))
-                && (this.phoneNumber == null || PLACEHOLDER.equals(this.phoneNumber));
-    }
+
 
     @JsonIgnore
     public String getPassword() {
@@ -65,10 +64,6 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
         return this.passwordHashed;
     }
 
-    public User setAuthorities(Collection<String> authorities) {
-        this.authorities = authorities != null ? Set.copyOf(authorities) : null;
-        return this;
-    }
 
     @JsonIgnore
     public ContextUser toContextUser() {
@@ -88,6 +83,8 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
                 .setPassword(getPassword())
                 .setPasswordHashed(isPasswordHashed())
                 .setNoFailedAttempt(getNoFailedAttempt())
-                .setStringAuthorities(authorities != null ? List.copyOf(authorities) : null);
+                .setStringAuthorities(authorities != null ? List.copyOf(authorities) : null)
+                .setCoach(isCoach)
+                .setCoachId(coachId);
     }
 }

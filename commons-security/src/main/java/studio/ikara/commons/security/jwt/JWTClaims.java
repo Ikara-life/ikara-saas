@@ -24,28 +24,33 @@ public class JWTClaims implements Serializable {
     private String hostName;
     private String port;
     private boolean oneTime = false;
+    private boolean isCoach;
+    private String coachId;
 
     public static JWTClaims from(Jws<Claims> parsed) {
-
         Claims claims = parsed.getBody();
-
-        return new JWTClaims()
+        JWTClaims jwtClaims = new JWTClaims()
                 .setUserId(claims.get("userId", Long.class))
                 .setHostName(claims.get("hostName", String.class))
                 .setPort(claims.get("port", String.class))
                 .setOneTime(claims.containsKey(ONE_TIME) ? claims.get(ONE_TIME, Boolean.class) : Boolean.FALSE);
+
+        if (claims.containsKey("isCoach"))
+            jwtClaims.setCoach(claims.get("isCoach", Boolean.class));
+        if (claims.containsKey("coachId"))
+            jwtClaims.setCoachId(claims.get("coachId", String.class));
+
+        return jwtClaims;
     }
 
     public Map<String, Object> getClaimsMap() {
-
         Map<String, Object> map = new HashMap<>();
-
         map.put("userId", this.userId);
         map.put("hostName", this.hostName);
         map.put("port", this.port);
-
         map.put(ONE_TIME, this.oneTime);
-
+        map.put("isCoach", this.isCoach);
+        map.put("coachId", this.coachId);
         return map;
     }
 }
