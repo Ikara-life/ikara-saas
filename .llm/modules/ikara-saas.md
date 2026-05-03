@@ -1,0 +1,160 @@
+# Module Reference — ikara-saas
+
+Multi-module repo. All modules under `studio.ikara` groupId. Spring Boot 3.5.3 parent.
+
+## Parent POM (inherited by all modules)
+
+```
+org.springframework.boot:spring-boot-starter-parent:3.5.3
+spring-cloud.version: 2025.0.0
+java.version: 24 (config: 21)
+```
+
+---
+
+## Shared Libraries (install before building services)
+
+### `commons` — `studio.ikara:commons:0.0.1-SNAPSHOT`
+
+Base Spring config, Redis+Caffeine cache, BCrypt, CORS, exception handling, JSON config.
+
+Key deps:
+| Dep | Purpose |
+|---|---|
+| `spring-boot-starter-web` | Web MVC |
+| `spring-boot-starter-security` | Spring Security |
+| `spring-boot-starter-cache` | Cache abstraction |
+| `spring-boot-starter-validation` | Jakarta validation |
+| `spring-boot-starter-actuator` | Health/metrics |
+| `io.lettuce:lettuce-core` | Redis async client |
+| `com.github.ben-manes.caffeine:caffeine` | L1 in-memory cache |
+| `com.google.code.gson:gson` | JSON serialization |
+| `org.springframework:spring-aspects` | AOP |
+| `spring-data-commons` | Pageable, Page types |
+| `lombok` | Code generation (optional) |
+
+### `commons-jooq` — `studio.ikara:commons-jooq:0.0.1-SNAPSHOT`
+
+Abstract DAO/service/controller layers, DSLContext wiring.
+
+Key deps:
+| Dep | Purpose |
+|---|---|
+| `org.jooq:jooq` | jOOQ (version managed by Spring Boot parent) |
+| `org.postgresql:postgresql` | PostgreSQL JDBC driver |
+| `spring-boot-starter-jdbc` | JDBC template |
+| `spring-cloud-starter-config` | Config client |
+| `studio.ikara:commons` | Base config |
+| `spring-data-commons` | Pageable |
+
+### `commons-security` — `studio.ikara:commons-security:0.0.1-SNAPSHOT`
+
+JWT util, `JWTTokenFilter`, `ContextUser`, security filter chain interface.
+
+Key deps:
+| Dep | Purpose |
+|---|---|
+| `io.jsonwebtoken:jjwt-api:0.12.6` | JWT API |
+| `io.jsonwebtoken:jjwt-impl:0.12.6` | JWT impl (runtime) |
+| `io.jsonwebtoken:jjwt-jackson:0.12.6` | JWT JSON (runtime) |
+| `spring-boot-starter-security` | Spring Security |
+| `studio.ikara:commons` | Base config |
+| `spring-data-commons` | Slice/Page |
+
+---
+
+## Services
+
+### `config` — `studio.ikara:config:1.1.0`
+
+Packaging: jar. Port 8001. Config Server.
+
+Key deps: `spring-cloud-config-server`, `spring-cloud-starter-netflix-eureka-client`, `spring-boot-starter-actuator`
+
+Plugins: `jib-maven-plugin:3.3.0` (→ `ghcr.io/ikara-life/config`), `flyway-maven-plugin`, `spring-boot-maven-plugin`
+
+---
+
+### `eureka` — `studio.ikara:eureka:1.1.0`
+
+Packaging: jar. Port 9999. Service discovery.
+
+Key deps: `spring-cloud-starter-netflix-eureka-server`, `spring-cloud-config-client`, `spring-cloud-starter-config`, `spring-boot-starter-actuator`
+
+Plugins: `jib-maven-plugin:3.3.0` (→ `ghcr.io/ikara-life/eureka`), `spring-boot-maven-plugin`
+
+---
+
+### `security` — `studio.ikara:security:1.1.0`
+
+Packaging: jar. Port 8001. Auth + user management.
+
+Key deps:
+| Dep | Version | Purpose |
+|---|---|---|
+| `studio.ikara:commons` | 0.0.1-SNAPSHOT | Base config |
+| `studio.ikara:commons-jooq` | 0.0.1-SNAPSHOT | jOOQ DAO layer |
+| `studio.ikara:commons-security` | 0.0.1-SNAPSHOT | JWT/security filter |
+| `org.jooq:jooq` | 3.20.5 | jOOQ |
+| `org.jooq:jooq-codegen` | 3.20.5 | Code gen |
+| `org.jooq:jooq-postgres-extensions` | 3.20.5 | PG type extensions |
+| `org.postgresql:postgresql` | 42.7.7 | JDBC driver |
+| `org.flywaydb:flyway-core` | (managed) | Migrations |
+| `org.springdoc:springdoc-openapi-starter-webmvc-ui` | 2.8.9 | Swagger UI |
+| `spring-boot-starter-web` | (managed) | Web MVC |
+| `spring-boot-starter-security` | (managed) | Spring Security |
+| `spring-boot-starter-cache` | (managed) | Cache |
+| `spring-boot-starter-jdbc` | (managed) | JDBC |
+| `spring-boot-starter-actuator` | (managed) | Health/metrics |
+| `spring-boot-starter-validation` | (managed) | Validation |
+| `spring-cloud-starter-config` | (managed) | Config client |
+| `spring-cloud-starter-netflix-eureka-client` | (managed) | Service discovery |
+| `spring-amqp:spring-rabbit` | (managed) | RabbitMQ (unused — see known-issues) |
+| `spring-retry` | (managed) | Retry |
+| `org.springframework:spring-aspects` | (managed) | AOP |
+| `lombok` | (managed) | Code gen |
+
+Profiles:
+| Profile | Purpose |
+|---|---|
+| `jooq` | jOOQ codegen from `SECURITY_.*` tables, schema `security`, DB `ikara` |
+| `spotless` | Code formatting check/apply |
+
+Plugins: `jib-maven-plugin:3.4.6` (→ `ghcr.io/ikara-life/security`), `maven-compiler-plugin`, `flyway-maven-plugin`, `spring-boot-maven-plugin`
+
+DB schema: `security`. Tables: `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES`. Highest Flyway version: V1.
+
+---
+
+### `core` — `studio.ikara:core:1.1.0`
+
+Packaging: jar. Port 8005. Core business logic (skeleton — no domain logic implemented).
+
+Key deps: same as `security` minus `commons-security`. Adds `studio.ikara:commons` only (no `commons-jooq` or `commons-security`).
+
+Profiles: `jooq` (generates from `CORE_.*` tables, schema `core`), `spotless`
+
+Plugins: `jib-maven-plugin:3.4.6` (→ `ghcr.io/ikara-life/core`), `maven-compiler-plugin`, `flyway-maven-plugin`, `spring-boot-maven-plugin`
+
+DB schema: `core`. No tables or migrations yet.
+
+---
+
+## Runtime External Dependencies (all services)
+
+| System | Version | Purpose |
+|---|---|---|
+| PostgreSQL | any recent | Primary data store |
+| Redis | any recent | L2 cache + pub/sub |
+| RabbitMQ | any recent | Message broker (declared, unused) |
+| Netflix Eureka | via Spring Cloud 2025.0.0 | Service discovery |
+| Spring Cloud Config | via Spring Cloud 2025.0.0 | Centralized config |
+
+---
+
+## Notable Constraints
+
+- Java 24 (except config module: 21) — virtual threads enabled
+- jOOQ 3.20.5 locked in pom.xml — overrides Spring Boot parent managed version
+- No JPA/Hibernate — deliberate; jOOQ only
+- `langchain4j.version: 1.1.0` and `playwright.version: 1.53.0` declared in `core` and `security` properties — not deps yet, planned

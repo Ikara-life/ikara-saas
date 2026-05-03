@@ -18,7 +18,7 @@
     <description>Common to all SAAS related api</description>
     <url/>
     <properties>
-        <java.version>24</java.version>
+        <java.version>25</java.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.runtime.version>4.0.0</jaxb.runtime.version>
         <jib.maven.plugin.version>3.4.6</jib.maven.plugin.version>

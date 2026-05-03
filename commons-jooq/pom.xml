@@ -32,7 +32,7 @@
     <properties>
         <base.package>studio.ikara</base.package>
         <env.ENVIRONMENT>dev</env.ENVIRONMENT>
-        <java.version>24</java.version>
+        <java.version>25</java.version>
         <!-- Dependency versions -->
         <main.java.dir>src/main/java</main.java.dir>
         <palantir-java.format.version>2.67.0</palantir-java.format.version>

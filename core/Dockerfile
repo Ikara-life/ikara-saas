@@ -1,4 +1,4 @@
-FROM eclipse-temurin:24-jdk
+FROM eclipse-temurin:25-jre-alpine
 
 COPY target/core-1.1.0.jar core-1.1.0.jar
 

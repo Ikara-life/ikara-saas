@@ -1,4 +1,4 @@
-FROM eclipse-temurin:24-jdk-alpine
+FROM eclipse-temurin:25-jre-alpine
 
 COPY target/config-1.1.0.jar config-1.1.0.jar
 

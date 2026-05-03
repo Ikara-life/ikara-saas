@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>24</java.version>
+        <java.version>25</java.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
     </properties>
     <dependencies>
@@ -76,7 +76,7 @@
                 <version>3.3.0</version>
                 <configuration>
                     <from>
-                        <image>openjdk:alpine</image>
+                        <image>eclipse-temurin:25-jre-alpine</image>
                     </from>
                     <to>
                         <image>ghcr.io/ikara-life/eureka</image>
