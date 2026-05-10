@@ -3,7 +3,7 @@ spring:
     config:
       server:
         native:
-          search-locations: file:///Users/cepl/IdeaProjects/ikara-saas/configfiles
+          search-locations: file:///Users/lawbringr/IdeaProjects/ikara/ikara-saas/configfiles
 server:
   port: 8888
 

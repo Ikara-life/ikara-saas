@@ -18,11 +18,11 @@
 
 ---
 
-## 3. Config Server Local Path Hardcoded to Different Machine
+## 3. Config Server Local Path Hardcoded Per Machine
 
 **File**: `config/src/main/resources/application-local.yml:2`
-**Symptom**: Config server fails in local profile — `file:///Users/cepl/IdeaProjects/ikara-saas/configfiles` doesn't exist on most machines.
-**Root cause**: Absolute path hardcoded to original dev's machine.
+**Symptom**: Config server fails on any machine other than the current dev's — path is `file:///Users/lawbringr/IdeaProjects/ikara/ikara-saas/configfiles`.
+**Root cause**: Absolute path hardcoded per developer. Updated from original `cepl` path but still machine-specific.
 **Fix**: Use relative path or env var: `file:///${CONFIG_FILES_PATH:./configfiles}`, set `CONFIG_FILES_PATH` per developer.
 
 ---
@@ -63,7 +63,16 @@
 
 ---
 
-## 8. Feign Client Config Without Feign Dependency
+## 8. `ConfigApplication.main()` Missing `public`
+
+**File**: `config/src/main/java/studio/ikara/config/ConfigApplication.java:13`
+**Symptom**: `static void main` is package-private — Spring Boot maven plugin may fail to detect entry point; reflection-based launchers (Jib, native) will error.
+**Root cause**: `public` modifier omitted.
+**Fix**: Change to `public static void main(String[] args)`.
+
+---
+
+## 9. Feign Client Config Without Feign Dependency
 
 **File**: `configfiles/application.yml` (feign.client.config.*), no `spring-cloud-starter-openfeign` in any pom.xml
 **Symptom**: Feign timeout properties loaded but ignored — no Feign clients exist.

@@ -91,6 +91,11 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>--sun-misc-unsafe-memory-access=allow</jvmFlag>
+                        </jvmFlags>
+                    </container>
                     <from>
                         <image>eclipse-temurin:25-jre-alpine</image>
                     </from>
@@ -110,6 +115,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- JDK 24+ warns on sun.misc.Unsafe memory access by default (JEP 498). -->
+                    <jvmArguments>--sun-misc-unsafe-memory-access=allow</jvmArguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>

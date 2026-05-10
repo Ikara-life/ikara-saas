@@ -49,7 +49,6 @@ Abstract controller `readPageFilter(Pageable, MultiValueMap<String,String>)` als
 
 - Put `@Valid` on `@RequestBody` params
 - Jakarta validation annotations on DTO fields: `@NotNull`, `@NotBlank`, `@Size`, `@Email`, `@Pattern`
-- No `@NoSpecialCharacters` yet — use `@Pattern` for character constraints
 - Validation errors surface as 400 via `ControllerAdvice`
 
 ## Logging
@@ -57,20 +56,6 @@ Abstract controller `readPageFilter(Pageable, MultiValueMap<String,String>)` als
 Log at method entry with correlation ID from MDC (`x-debug` key in log pattern). Log: operation name, entity ID. Do NOT log: passwords, tokens, full DTO content (PII risk).
 
 Pattern set in `configfiles/application.yml` logback config.
-
-## @ApiVisibility — Tier Assignment
-
-Class-level annotation sets default tier for all methods; method annotation overrides.
-
-```java
-@ApiVisibility(Visibility.INTERNAL)   // class default
-public class MyController {
-    @ApiVisibility(Visibility.EXTERNAL)  // override for this method only
-    public ResponseEntity<Foo> publicEndpoint() { ... }
-}
-```
-
-Only put `@ApiVisibility` on methods that differ from class default.
 
 ## Tag Placement
 
@@ -110,7 +95,6 @@ DTOs in `<module>/src/main/java/studio/ikara/<service>/dto/`.
 
 - [ ] Controller extends appropriate abstract controller or standalone `@RestController`
 - [ ] `@Tag(name = OpenApiConfig.TAG_*)` on controller class
-- [ ] `@ApiVisibility` on class (INTERNAL default); method override if EXTERNAL/BACKOFFICE
 - [ ] `@Operation(summary, description)` on method
 - [ ] Request body has `@Valid`; DTO fields have validation annotations
 - [ ] No PII in log statements

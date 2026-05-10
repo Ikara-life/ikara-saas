@@ -32,11 +32,11 @@ Client → JWTTokenFilter (OncePerRequestFilter)
 
 New request (login/register):
 ```
-Client → (no controller yet — security module has service+dao but no @RestController)
-       → AuthenticationService.authenticate()
-       → BCrypt password check
-       → JWTUtil.generateToken() — embeds userId, hostName, port, oneTime
-       → returns JWT
+Client → (no @RestController yet — services implemented, no HTTP endpoints)
+       → AuthenticationService.authenticate() — BCrypt check, token generation
+       → UserRegistrationService.registerUser() — validate, create user, auto-authenticate
+       → JWTUtil.generateToken() — embeds userId, hostName, port
+       → returns AuthenticationResponse{ContextUser, accessToken, accessTokenExpiryAt}
 ```
 
 ## Request Path — Config Bootstrap
@@ -70,7 +70,7 @@ No JPA. All DB access via jOOQ `DSLContext`.
 | `security` | security service | `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES` |
 | `core` | core service | (no tables yet — skeleton) |
 
-Both schemas on same PostgreSQL instance in dev (localhost:5432, DB `postgres`).
+Both schemas on same PostgreSQL instance in dev (localhost:5432, DB `ikara`).
 
 ## Caching
 
@@ -87,16 +87,16 @@ RabbitMQ declared (`spring-rabbit` dependency, MQ properties in `application-def
 
 - JWT HS512, issuer `"aplygen"`, custom snowflake-style user IDs
 - Tokens bound to issuing host IP — request from different IP fails
-- Default expiry 30 min, remember-me 1 year
+- Default expiry 60 min (`jwt.token.default.expiry`), remember-me 1440 min (`jwt.token.rememberme.expiry`)
 - JWT secret in `configfiles/application.yml` (plaintext — dev only, must rotate in prod)
 - Spring Security: CSRF off, CORS open (`*`), internal routes + Swagger + actuator permitted without auth
 
 ## API Documentation
 
-Both `security` and `core` include `springdoc-openapi-starter-webmvc-ui:2.8.9`.
+Both `security` and `core` include `springdoc-openapi-starter-webmvc-ui:2.8.17`.
 - Spring Boot 3.x → springdoc v2.x artifact (already correct)
 - Swagger UI: `http://localhost:<port>/swagger-ui.html`
-- No `OpenApiConfig` class yet — needs creation per service
+- `OpenApiConfig` exists in security module — not yet created in core
 
 ## External Dependencies
 

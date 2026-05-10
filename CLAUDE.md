@@ -12,16 +12,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Available Skills
 
-Two slash commands are available in this repo (`.claude/skills/`). Use them proactively — suggest them when relevant.
+Project-specific slash command in `.claude/skills/llm-ikara/`.
 
 | Command | When to use |
 |---|---|
-| `/llm [topic]` | User asks about architecture, conventions, known issues, API design, module deps, or commands. Show topic list if no arg given. |
-| `/llm-init` | User wants to bootstrap or refresh the `.llm/` structure. |
-
-At session start: briefly mention `/llm` is available for docs if the user seems unfamiliar with the codebase.
+| `/llm-ikara [topic]` | User asks about architecture, conventions, known issues, API design, module deps, or commands. Show topic list if no arg given. |
 
 Topics: `architecture` · `conventions` · `commands` · `known-issues` · `api-conventions` · `openapi` · `module`
+
+## API Design
+
+No visibility tiers. Single flat Swagger group. All endpoints visible in one `/v3/api-docs` spec.
 
 ## .llm Folder Convention
 

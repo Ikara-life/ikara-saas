@@ -7,7 +7,7 @@ Multi-module repo. All modules under `studio.ikara` groupId. Spring Boot 3.5.3 p
 ```
 org.springframework.boot:spring-boot-starter-parent:3.5.3
 spring-cloud.version: 2025.0.0
-java.version: 24 (config: 21)
+java.version: 25 (security/core); config: 21
 ```
 
 ---
@@ -100,7 +100,7 @@ Key deps:
 | `org.jooq:jooq-postgres-extensions` | 3.20.5 | PG type extensions |
 | `org.postgresql:postgresql` | 42.7.7 | JDBC driver |
 | `org.flywaydb:flyway-core` | (managed) | Migrations |
-| `org.springdoc:springdoc-openapi-starter-webmvc-ui` | 2.8.9 | Swagger UI |
+| `org.springdoc:springdoc-openapi-starter-webmvc-ui` | 2.8.17 | Swagger UI |
 | `spring-boot-starter-web` | (managed) | Web MVC |
 | `spring-boot-starter-security` | (managed) | Spring Security |
 | `spring-boot-starter-cache` | (managed) | Cache |
@@ -123,6 +123,18 @@ Profiles:
 Plugins: `jib-maven-plugin:3.4.6` (→ `ghcr.io/ikara-life/security`), `maven-compiler-plugin`, `flyway-maven-plugin`, `spring-boot-maven-plugin`
 
 DB schema: `security`. Tables: `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES`. Highest Flyway version: V1.
+
+Key classes implemented:
+| Class | Role |
+|---|---|
+| `AuthenticationService` | Implements `IAuthenticationService` — login + token validation |
+| `UserRegistrationService` | Register new user → auto-authenticate → return `AuthenticationResponse` |
+| `UserService` | Extends `AbstractJOOQUpdatableDataService` — CRUD + password check |
+| `UserDAO` | jOOQ DAO for `SECURITY_USERS` |
+| `SecurityConfiguration` | Extends `AbstractJooqBaseConfiguration`, implements `ISecurityConfiguration` |
+| `OpenApiConfig` | Single `OpenAPI` bean, `TAG_AUTH = "Authentication"` |
+
+Models: `AuthenticationRequest` (userName, password, rememberMe), `AuthenticationResponse` (ContextUser, accessToken, accessTokenExpiryAt), `UserRegistrationRequest` (emailId, password, phone, name fields → `toUser()` sets userName = emailId).
 
 ---
 

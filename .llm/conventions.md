@@ -65,7 +65,7 @@ No JPA, Hibernate, Spring Data — project avoids deliberately.
 - All dep versions in `<properties>` as `package.i.<name>.version` (internal) or `package.o.<name>.version` (external)
 - Parent: `org.springframework.boot:spring-boot-starter-parent:3.5.3`
 - Spring Cloud BOM: `2025.0.0`
-- Java: 24 (config service: 21)
+- Java: 25 (security/core); config service: 21
 - New shared lib: `mvn clean install` to local Maven repo before dependent services build
 
 ## Code Style
@@ -80,8 +80,6 @@ Allowed origins hardcoded in `AbstractBaseConfiguration`: `localhost:3000`, `loc
 
 ## API Documentation (OpenAPI)
 
-- `springdoc-openapi-starter-webmvc-ui:2.8.9` (Spring Boot 3.x / springdoc v2.x)
-- Create `OpenApiConfig` per service with grouped beans: `external`, `backoffice`, `internal`
-- Use `@ApiVisibility` annotation (create in each service's annotation package) for tier assignment
-- Default tier: INTERNAL — class-level annotation, method overrides
+- `springdoc-openapi-starter-webmvc-ui:2.8.17` (Spring Boot 3.x / springdoc v2.x)
+- Create `OpenApiConfig` per service — single `OpenAPI` bean, no visibility tiers
 - Tag: `@Tag(name = OpenApiConfig.TAG_*)` on controller class; never in `@Operation`
