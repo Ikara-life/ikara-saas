@@ -156,7 +156,7 @@ DB schema: `core`. No tables or migrations yet.
 
 | System | Version | Purpose |
 |---|---|---|
-| PostgreSQL | any recent | Primary data store |
+| MySQL | 8.x+ | Primary data store |
 | Redis | any recent | L2 cache + pub/sub |
 | RabbitMQ | any recent | Message broker (declared, unused) |
 | Netflix Eureka | via Spring Cloud 2025.0.0 | Service discovery |

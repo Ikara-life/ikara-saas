@@ -57,20 +57,21 @@ Config files served (all in `configfiles/`):
 
 ## Data Layer
 
-No JPA. All DB access via jOOQ `DSLContext`.
+No JPA. All DB access via jOOQ `DSLContext` (dialect: `MYSQL`).
 
 - `AbstractDAO` → `AbstractUpdatableDAO` (commons-jooq)
-- Concrete: `UserDAO` (security module) — queries `SECURITY.SECURITY_USERS` joined to `SECURITY.SECURITY_AUTHORITIES`
+- ID generation: `SnowflakeIdGenerator` in commons-jooq — same snowflake algorithm (epoch 2023-01-01, shard 1), executed in Java before insert (no DB sequence/function)
+- Concrete: `UserDAO` (security module) — queries `SECURITY_USERS` joined to `SECURITY_AUTHORITIES`
 - Code generated from DB: jooq profile in pom.xml generates records into `<module>/src/main/java/.../jooq/`
 
 ## Database Schemas
 
-| Schema | Owner | Tables |
+| Database | Owner | Tables |
 |---|---|---|
 | `security` | security service | `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES` |
 | `core` | core service | (no tables yet — skeleton) |
 
-Both schemas on same PostgreSQL instance in dev (localhost:5432, DB `ikara`).
+Two separate MySQL databases on same instance (localhost:3306). Flyway creates them via `create-schemas: true`.
 
 ## Caching
 
@@ -102,7 +103,7 @@ Both `security` and `core` include `springdoc-openapi-starter-webmvc-ui:2.8.17`.
 
 | System | Purpose | Config key |
 |---|---|---|
-| PostgreSQL | Primary data store | `*.db.url`, `spring.datasource.*` |
+| MySQL | Primary data store | `*.db.url`, `spring.datasource.*` |
 | Redis | L2 cache + pub/sub eviction | `redis.url` |
 | RabbitMQ | Message broker (not yet used) | `mq.host`, `mq.port` |
 | Netflix Eureka | Service discovery | `eureka.client.serviceUrl.defaultZone` |

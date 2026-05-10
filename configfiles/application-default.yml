@@ -1,18 +1,18 @@
 security:
   db:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
+    url: jdbc:mysql://localhost:3306/security
+    username: root
     password: Vishwas123#
     flyway:
-      url: jdbc:postgresql://localhost:5432/postgres
+      url: jdbc:mysql://localhost:3306
 
 core:
   db:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
+    url: jdbc:mysql://localhost:3306/core
+    username: root
     password: Vishwas123#
     flyway:
-      url: jdbc:postgresql://localhost:5432/postgres
+      url: jdbc:mysql://localhost:3306
 
 spring:
   flyway:

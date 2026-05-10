@@ -60,13 +60,13 @@ public abstract class AbstractJooqBaseConfiguration extends AbstractBaseConfigur
     @Bean
     public DSLContext context() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
 
         TransactionAwareDataSourceProxy proxy = new TransactionAwareDataSourceProxy(dataSource);
 
-        return DSL.using(proxy, SQLDialect.POSTGRES);
+        return DSL.using(proxy, SQLDialect.MYSQL);
     }
 }

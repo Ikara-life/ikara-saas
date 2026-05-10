@@ -6,12 +6,13 @@ spring:
     url: ${core.db.url}
     username: ${core.db.username}
     password: ${core.db.password}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
     schemas: core
+    create-schemas: true
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${core.db.flyway.url}
     user: ${core.db.username}

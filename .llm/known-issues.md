@@ -1,20 +1,15 @@
 # Known Issues
 
-## 1. Flyway Cannot Find Migrations — Wrong Directory Name
+## 1. Old PG Migration in Wrong Directory (Superseded)
 
 **File**: `security/src/main/resources/db.migration/V1__init.sql`
-**Symptom**: Flyway runs on startup, finds no migration files, schema never created.
-**Root cause**: Files in `db.migration/` (dot) but `spring.flyway.locations: classpath:db/migration` expects slash. Java classpath treats as different paths.
-**Fix**: Rename `db.migration` → `db/migration` (create `db/` subdir, move `migration/` in), or change Flyway location to `classpath:db.migration`.
+**Status**: Superseded — MySQL migration now at correct path `security/src/main/resources/db/migration/V1__init.sql`. Old PG file in `db.migration/` can be deleted.
 
 ---
 
-## 2. Wrong JDBC Driver Class in Flyway Config
+## 2. ~~Wrong JDBC Driver Class in Flyway Config~~ — RESOLVED
 
-**File**: `configfiles/core.yml:7`, `configfiles/security.yml:7`
-**Symptom**: Flyway fails at startup with `ClassNotFoundException: com.mysql.cj.jdbc.Driver`.
-**Root cause**: `spring.flyway.driver-class-name: com.mysql.cj.jdbc.Driver` — MySQL driver on PostgreSQL database.
-**Fix**: Change to `spring.flyway.driver-class-name: org.postgresql.Driver` in both `core.yml` and `security.yml`.
+Database switched from PostgreSQL to MySQL. All driver references now correctly set to `com.mysql.cj.jdbc.Driver`.
 
 ---
 

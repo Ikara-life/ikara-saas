@@ -4,8 +4,8 @@
 
 - Migration files go in: `<module>/src/main/resources/db.migration/` (dot-separated — matches actual files; see known-issues.md for path bug)
 - Naming: `V{n}__{description}.sql` (double underscore)
-- Schema prefix all objects: `SECURITY.` or `CORE.` — never unqualified names
-- Use provided ID generation function: `SECURITY_NEXT_ID()` / `CORE_NEXT_ID()` — custom snowflake (epoch 2023-01-01, shard 1)
+- No schema prefix — tables are unqualified (Flyway connects to the correct MySQL database per service)
+- IDs generated in Java via `SnowflakeIdGenerator.nextId()` in `commons-jooq` — same snowflake algorithm (epoch 2023-01-01, shard 1); no DB function needed
 - Add `BEFORE UPDATE` trigger for `UPDATED_AT` on every new table (copy pattern from `V1__init.sql`)
 - Current highest migration: security=V1, core=none
 

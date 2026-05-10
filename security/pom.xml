@@ -32,7 +32,7 @@
     <properties>
         <base.package>studio.ikara</base.package>
         <base.package.dir>studio/ikara</base.package.dir>
-        <database.db.name>ikara</database.db.name>
+        <database.db.name>security</database.db.name>
         <database.schema.name>security</database.schema.name>
         <env.ENVIRONMENT>dev</env.ENVIRONMENT>
         <java.version>25</java.version>
@@ -50,10 +50,9 @@
         <main.java.dir>src/main/java</main.java.dir>
         <palantir-java.format.version>2.67.0</palantir-java.format.version>
         <playwright.version>1.53.0</playwright.version>
-        <postgresql.jdbc.password>Vishwas123#</postgresql.jdbc.password>
-        <postgresql.jdbc.url>jdbc:postgresql://localhost:5432/${database.db.name}</postgresql.jdbc.url>
-        <postgresql.jdbc.user>postgres</postgresql.jdbc.user>
-        <postgresql.version>42.7.7</postgresql.version>
+        <mysql.jdbc.password>Vishwas123#</mysql.jdbc.password>
+        <mysql.jdbc.url>jdbc:mysql://localhost:3306/${database.db.name}</mysql.jdbc.url>
+        <mysql.jdbc.user>root</mysql.jdbc.user>
         <resources.dir>src/main/resources</resources.dir>
         <server.package>security</server.package>
         <server.package.dir>security</server.package.dir>
@@ -88,15 +87,14 @@
             <artifactId>jooq-codegen</artifactId>
             <version>${jooq.version}</version>
         </dependency>
+        <!-- MySQL -->
         <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-postgres-extensions</artifactId>
-            <version>${jooq.version}</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -260,24 +258,16 @@
                         <artifactId>jooq-codegen-maven</artifactId>
                         <configuration>
                             <jdbc>
-                                <driver>org.postgresql.Driver</driver>
-                                <url>${postgresql.jdbc.url}</url>
-                                <user>${postgresql.jdbc.user}</user>
-                                <password>${postgresql.jdbc.password}</password>
+                                <driver>com.mysql.cj.jdbc.Driver</driver>
+                                <url>${mysql.jdbc.url}</url>
+                                <user>${mysql.jdbc.user}</user>
+                                <password>${mysql.jdbc.password}</password>
                             </jdbc>
                             <generator>
                                 <database>
-                                    <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                                    <name>org.jooq.meta.mysql.MySQLDatabase</name>
                                     <includes>SECURITY_.*</includes>
                                     <inputSchema>${database.schema.name}</inputSchema>
-                                    <schemata>
-                                        <schema>
-                                            <inputSchema>${database.schema.name}</inputSchema>
-                                        </schema>
-                                        <schema>
-                                            <inputSchema>public</inputSchema>
-                                        </schema>
-                                    </schemata>
                                     <forcedTypes>
                                         <forcedType>
                                             <name>USER_STATUS_CODE</name>
@@ -287,7 +277,6 @@
                                             <enumConverter>true</enumConverter>
                                         </forcedType>
                                     </forcedTypes>
-                                    <forcedTypes/>
                                 </database>
                                 <generate>
                                     <deprecated>false</deprecated>
@@ -314,9 +303,9 @@
                                 <version>${jaxb.runtime.version}</version>
                             </dependency>
                             <dependency>
-                                <groupId>org.postgresql</groupId>
-                                <artifactId>postgresql</artifactId>
-                                <version>${postgresql.version}</version>
+                                <groupId>com.mysql</groupId>
+                                <artifactId>mysql-connector-j</artifactId>
+                                <version>9.3.0</version>
                             </dependency>
                         </dependencies>
                         <executions>

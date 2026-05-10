@@ -41,6 +41,7 @@ import studio.ikara.commons.model.condition.ComplexConditionOperator;
 import studio.ikara.commons.model.condition.FilterCondition;
 import studio.ikara.commons.model.condition.FilterConditionOperator;
 import studio.ikara.commons.model.dto.AbstractDTO;
+import studio.ikara.commons.jooq.util.SnowflakeIdGenerator;
 import studio.ikara.commons.thread.VirtualThreadExecutor;
 
 @Getter
@@ -133,9 +134,11 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
         return VirtualThreadExecutor.supplyAsync(() -> this.getRecordById(id).into(this.pojoClass));
     }
 
+    @SuppressWarnings("unchecked")
     public CompletableFuture<D> create(D pojo) {
         return VirtualThreadExecutor.supplyAsync(() -> {
-            pojo.setId(null);
+            I id = (I) Long.valueOf(SnowflakeIdGenerator.nextId());
+            pojo.setId(id);
 
             return dslContext.transactionResult(ctx -> {
                 DSLContext dsl = ctx.dsl();
@@ -143,11 +146,7 @@ public abstract class AbstractDAO<R extends UpdatableRecord<R>, I extends Serial
                 R rec = dsl.newRecord(this.table);
                 rec.from(pojo);
 
-                I id = dsl.insertInto(this.table)
-                        .set(rec)
-                        .returning(this.idField)
-                        .fetchOne()
-                        .getValue(this.idField);
+                dsl.insertInto(this.table).set(rec).execute();
 
                 return dsl.selectFrom(this.table)
                         .where(this.idField.eq(id))

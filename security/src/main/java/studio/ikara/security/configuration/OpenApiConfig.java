@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     public static final String TAG_AUTH = "Authentication";
+    public static final String TAG_USER = "Users";
 
     @Bean
     public OpenAPI securityOpenAPI() {
