@@ -27,3 +27,10 @@ spring:
           uri: lb://security
           predicates:
             - Path=/api/security/**, /*/api/security/**, /*/*/api/security/**, /*/*/*/api/security/**, /*/*/*/*/api/security/**, /*/*/*/*/*/api/security/**, /*/*/*/*/*/*/api/security/**, /*/*/*/*/*/*/*/api/security/**, /*/*/*/*/*/*/*/*/api/security/**, /*/*/*/*/*/*/*/*/*/api/security/**
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true

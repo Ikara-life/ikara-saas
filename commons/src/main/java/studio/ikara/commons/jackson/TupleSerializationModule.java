@@ -1,16 +1,15 @@
 package studio.ikara.commons.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.node.ArrayNode;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,82 +32,81 @@ public class TupleSerializationModule extends SimpleModule {
 
         super();
 
-        this.addSerializer(Tuple2.class, new JsonSerializer<Tuple2>() {
+        this.addSerializer(Tuple2.class, new ValueSerializer<Tuple2>() {
 
             @Override
-            public void serialize(Tuple2 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple2 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addSerializer(Tuple3.class, new JsonSerializer<>() {
+        this.addSerializer(Tuple3.class, new ValueSerializer<>() {
 
             @Override
-            public void serialize(Tuple3 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple3 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addSerializer(Tuple4.class, new JsonSerializer<Tuple4>() {
+        this.addSerializer(Tuple4.class, new ValueSerializer<Tuple4>() {
 
             @Override
-            public void serialize(Tuple4 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple4 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addSerializer(Tuple5.class, new JsonSerializer<Tuple5>() {
+        this.addSerializer(Tuple5.class, new ValueSerializer<Tuple5>() {
 
             @Override
-            public void serialize(Tuple5 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple5 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addSerializer(Tuple6.class, new JsonSerializer<Tuple6>() {
+        this.addSerializer(Tuple6.class, new ValueSerializer<Tuple6>() {
 
             @Override
-            public void serialize(Tuple6 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple6 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addSerializer(Tuple7.class, new JsonSerializer<Tuple7>() {
+        this.addSerializer(Tuple7.class, new ValueSerializer<Tuple7>() {
 
             @Override
-            public void serialize(Tuple7 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple7 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addSerializer(Tuple8.class, new JsonSerializer<Tuple8>() {
+        this.addSerializer(Tuple8.class, new ValueSerializer<Tuple8>() {
 
             @Override
-            public void serialize(Tuple8 value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            public void serialize(Tuple8 value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
                 writeTuple(value, gen);
             }
         });
 
-        this.addDeserializer(Tuple2.class, new JsonDeserializer<Tuple2>() {
+        this.addDeserializer(Tuple2.class, new ValueDeserializer<Tuple2>() {
 
             @Override
-            public Tuple2 deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+            public Tuple2 deserialize(JsonParser jp, DeserializationContext ctxt) throws JacksonException {
 
-                ObjectMapper mapper = (ObjectMapper) jp.getCodec();
-                JsonNode node = mapper.readTree(jp);
+                JsonNode node = ctxt.readTree(jp);
                 List<Object> result = new ArrayList<>();
                 if (node != null) {
                     if (node instanceof ArrayNode arrayNode) {
                         for (var elementNode : arrayNode) {
-                            result.add(mapper.readValue(elementNode.traverse(mapper), Object.class));
+                            result.add(ctxt.readValue(elementNode.traverse(ctxt), Object.class));
                         }
                     } else {
-                        result.add(mapper.readValue(node.traverse(mapper), Object.class));
+                        result.add(ctxt.readValue(node.traverse(ctxt), Object.class));
                     }
                 }
 
                 if (result.size() < 2 || result.size() > 8)
-                    throw new IOException(
+                    throw new tools.jackson.core.exc.StreamReadException(jp,
                             "Tuple can have min 2 and max 8 elements but found : " + result.size() + " elements");
 
                 return Tuples.fromArray(result.toArray());
@@ -117,10 +115,10 @@ public class TupleSerializationModule extends SimpleModule {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void writeTuple(Tuple2 value, JsonGenerator gen) throws IOException {
+    private static void writeTuple(Tuple2 value, JsonGenerator gen) throws JacksonException {
         gen.writeStartArray();
         for (Object e : value.toArray()) {
-            gen.writeObject(e);
+            gen.writePOJO(e);
         }
         gen.writeEndArray();
     }

@@ -1,6 +1,8 @@
 package studio.ikara.security.service;
 
 import java.util.concurrent.CompletableFuture;
+
+import org.jooq.types.ULong;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import studio.ikara.commons.jooq.service.AbstractJOOQUpdatableDataService;
@@ -8,10 +10,10 @@ import studio.ikara.commons.security.jwt.ContextUser;
 import studio.ikara.commons.thread.VirtualThreadExecutor;
 import studio.ikara.security.dao.UserDAO;
 import studio.ikara.security.dto.User;
-import studio.ikara.security.jooq.security.tables.records.SecurityUsersRecord;
+import studio.ikara.security.jooq.tables.records.SecurityUsersRecord;
 
 @Service
-public class UserService extends AbstractJOOQUpdatableDataService<SecurityUsersRecord, Long, User, UserDAO> {
+public class UserService extends AbstractJOOQUpdatableDataService<SecurityUsersRecord, ULong, User, UserDAO> {
 
     private final PasswordEncoder passwordEncoder;
 

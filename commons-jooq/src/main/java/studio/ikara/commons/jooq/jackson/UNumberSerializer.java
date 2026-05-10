@@ -1,9 +1,9 @@
 package studio.ikara.commons.jooq.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 import org.jooq.types.UNumber;
 
 public class UNumberSerializer extends StdSerializer<UNumber> {
@@ -15,7 +15,7 @@ public class UNumberSerializer extends StdSerializer<UNumber> {
     }
 
     @Override
-    public void serialize(UNumber value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(UNumber value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
 
         gen.writeNumber(value.toBigInteger());
     }

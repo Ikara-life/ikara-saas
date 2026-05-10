@@ -2,8 +2,8 @@ package studio.ikara.commons.configuration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,7 +27,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,7 +46,7 @@ public abstract class AbstractBaseConfiguration implements WebMvcConfigurer {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractBaseConfiguration.class);
 
-    protected ObjectMapper objectMapper;
+    protected JsonMapper objectMapper;
 
     @Value("${redis.url:}")
     private String redisURL;
@@ -53,15 +56,16 @@ public abstract class AbstractBaseConfiguration implements WebMvcConfigurer {
 
     private RedisCodec<String, Object> objectCodec;
 
-    protected AbstractBaseConfiguration(ObjectMapper objectMapper) {
+    protected AbstractBaseConfiguration(JsonMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     protected void initialize() {
-        this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        this.objectMapper.setDefaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_NULL, Include.ALWAYS));
-        this.objectMapper.setDefaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_EMPTY, Include.ALWAYS));
-        this.objectMapper.registerModule(new CommonsSerializationModule());
+        this.objectMapper = this.objectMapper.rebuild()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .changeDefaultPropertyInclusion(ignored -> JsonInclude.Value.construct(Include.NON_EMPTY, Include.ALWAYS))
+                .addModule(new CommonsSerializationModule())
+                .build();
         this.objectCodec = "object".equals(codecType) ? new RedisObjectCodec() : new RedisJSONCodec(this.objectMapper);
     }
 
@@ -78,10 +82,31 @@ public abstract class AbstractBaseConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(this.objectMapper);
-        return converter;
+    public JacksonJsonHttpMessageConverter jacksonJsonHttpMessageConverter() {
+        return new JacksonJsonHttpMessageConverter(this.objectMapper);
+    }
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        for (int i = 0; i < converters.size(); i++) {
+            if (converters.get(i) instanceof ByteArrayHttpMessageConverter bac) {
+                bac.setSupportedMediaTypes(List.of(
+                        MediaType.APPLICATION_JSON,
+                        new MediaType("application", "*+json"),
+                        MediaType.APPLICATION_OCTET_STREAM));
+                if (i != 0) {
+                    converters.remove(i);
+                    converters.add(0, bac);
+                }
+                return;
+            }
+        }
+        ByteArrayHttpMessageConverter bac = new ByteArrayHttpMessageConverter();
+        bac.setSupportedMediaTypes(List.of(
+                MediaType.APPLICATION_JSON,
+                new MediaType("application", "*+json"),
+                MediaType.APPLICATION_OCTET_STREAM));
+        converters.add(0, bac);
     }
 
     @Override

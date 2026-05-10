@@ -1,8 +1,8 @@
 package studio.ikara.commons.codec;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import io.lettuce.core.codec.RedisCodec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +55,7 @@ public class RedisJSONCodec implements RedisCodec<String, Object> {
 
         try {
             return ByteBuffer.wrap(this.objectMapper.writeValueAsString(map).getBytes());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new GenericException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot convert value to json : " + value, e);
         }
     }

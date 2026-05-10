@@ -1,10 +1,11 @@
 package studio.ikara.security.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import studio.ikara.commons.jooq.configuration.AbstractJooqBaseConfiguration;
@@ -13,6 +14,7 @@ import studio.ikara.commons.security.service.IAuthenticationService;
 import studio.ikara.security.service.SecurityMessageResourceService;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfiguration extends AbstractJooqBaseConfiguration implements ISecurityConfiguration {
 
     protected SecurityMessageResourceService messageResourceService;
@@ -20,7 +22,7 @@ public class SecurityConfiguration extends AbstractJooqBaseConfiguration impleme
 
     public SecurityConfiguration(
             SecurityMessageResourceService messageResourceService,
-            ObjectMapper objectMapper,
+            JsonMapper objectMapper,
             @Lazy IAuthenticationService authenticationService) {
         super(objectMapper);
         this.messageResourceService = messageResourceService;

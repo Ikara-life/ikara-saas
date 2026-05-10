@@ -1,6 +1,6 @@
 package studio.ikara.commons.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.annotation.Priority;
 import java.net.URI;
 import java.time.Instant;

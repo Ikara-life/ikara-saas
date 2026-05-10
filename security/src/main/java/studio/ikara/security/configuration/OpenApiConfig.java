@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     public static final String TAG_AUTH = "Authentication";
+    public static final String TAG_PERMISSION = "Permissions";
+    public static final String TAG_ROLE = "Roles";
     public static final String TAG_USER = "Users";
 
     @Bean
@@ -19,8 +21,6 @@ public class OpenApiConfig {
                         .title("Ikara Security API")
                         .description("Authentication and user management.")
                         .version("v1")
-                        .contact(new Contact()
-                                .name("Ikara Engineering")
-                                .email("engineering@ikara.studio")));
+                        .contact(new Contact().name("Ikara Engineering").email("engineering@ikara.studio")));
     }
 }

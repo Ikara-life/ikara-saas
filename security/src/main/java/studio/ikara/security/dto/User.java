@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.jooq.types.ULong;
 import studio.ikara.commons.model.dto.AbstractUpdatableDTO;
 import studio.ikara.commons.security.jwt.ContextUser;
 import studio.ikara.security.enums.UserStatusCode;
@@ -17,7 +18,7 @@ import studio.ikara.security.enums.UserStatusCode;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @ToString(callSuper = true)
-public class User extends AbstractUpdatableDTO<Long, Long> {
+public class User extends AbstractUpdatableDTO<ULong, ULong> {
 
     public static final String PLACEHOLDER = "NONE";
 
@@ -73,9 +74,9 @@ public class User extends AbstractUpdatableDTO<Long, Long> {
     @JsonIgnore
     public ContextUser toContextUser() {
         return new ContextUser()
-                .setId(getId())
-                .setCreatedBy(getCreatedBy())
-                .setUpdatedBy(getUpdatedBy())
+                .setId(getId().longValue())
+                .setCreatedBy(getCreatedBy().longValue())
+                .setUpdatedBy(getUpdatedBy().longValue())
                 .setCreatedAt(getCreatedAt())
                 .setUpdatedAt(getUpdatedAt())
                 .setUserName(getUserName())

@@ -1,8 +1,6 @@
 package studio.ikara.security.enums;
 
 import org.jooq.EnumType;
-import org.jooq.Schema;
-import studio.ikara.security.jooq.public_.Public;
 
 public enum UserStatusCode implements EnumType {
     ACTIVE("ACTIVE"),
@@ -28,11 +26,6 @@ public enum UserStatusCode implements EnumType {
     @Override
     public String getLiteral() {
         return this.literal;
-    }
-
-    @Override
-    public Schema getSchema() {
-        return Public.PUBLIC;
     }
 
     @Override

@@ -12,13 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Available Skills
 
-Project-specific slash command in `.claude/skills/llm-ikara/`.
+Project-specific slash commands in `.claude/skills/`.
 
 | Command | When to use |
 |---|---|
 | `/llm-ikara [topic]` | User asks about architecture, conventions, known issues, API design, module deps, or commands. Show topic list if no arg given. |
+| `/spotless-config [module-path]` | Add or update the Spotless Maven profile in a module's pom.xml following ikara-saas conventions. |
+| `/rebuild-all [module]` | Clean-build all shared libs then services in dependency order. Pass a single module name to rebuild just that one. |
 
-Topics: `architecture` · `conventions` · `commands` · `known-issues` · `api-conventions` · `openapi` · `module`
+Topics for `/llm-ikara`: `architecture` · `conventions` · `commands` · `known-issues` · `api-conventions` · `openapi` · `module`
 
 ## API Design
 

@@ -1,6 +1,6 @@
 package studio.ikara.commons.jooq.jackson;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.module.SimpleModule;
 import java.io.Serial;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;

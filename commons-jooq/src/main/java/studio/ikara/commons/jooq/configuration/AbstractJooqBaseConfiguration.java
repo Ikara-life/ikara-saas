@@ -1,8 +1,9 @@
 package studio.ikara.commons.jooq.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.util.List;
 import lombok.Getter;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -20,8 +21,6 @@ import studio.ikara.commons.jooq.gson.UNumberAdapter;
 import studio.ikara.commons.jooq.gson.UNumberListAdapter;
 import studio.ikara.commons.jooq.jackson.UnsignedNumbersSerializationModule;
 
-import java.util.List;
-
 @Getter
 public abstract class AbstractJooqBaseConfiguration extends AbstractBaseConfiguration {
 
@@ -34,13 +33,15 @@ public abstract class AbstractJooqBaseConfiguration extends AbstractBaseConfigur
     @Value("${spring.datasource.password}")
     protected String password;
 
-    protected AbstractJooqBaseConfiguration(ObjectMapper objectMapper) {
+    protected AbstractJooqBaseConfiguration(JsonMapper objectMapper) {
         super(objectMapper);
     }
 
     public void initialize(AbstractMessageService messageResourceService) {
         super.initialize();
-        this.objectMapper.registerModule(new UnsignedNumbersSerializationModule(messageResourceService));
+        this.objectMapper = this.objectMapper.rebuild()
+                .addModule(new UnsignedNumbersSerializationModule(messageResourceService))
+                .build();
     }
 
     @Override

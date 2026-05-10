@@ -1,6 +1,6 @@
 package studio.ikara.commons.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -43,7 +43,8 @@ public interface ISecurityConfiguration {
                         .requestMatchers("/.*internal.*")
                         .permitAll()
                         .requestMatchers(
-                                "/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/v3/api-docs/**", "/error")
+                                "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
+                                "/v3/api-docs", "/v3/api-docs/**", "/error")
                         .permitAll()
                         .requestMatchers("/actuator/**")
                         .permitAll()

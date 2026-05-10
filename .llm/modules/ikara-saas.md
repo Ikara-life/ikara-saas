@@ -1,12 +1,12 @@
 # Module Reference — ikara-saas
 
-Multi-module repo. All modules under `studio.ikara` groupId. Spring Boot 3.5.3 parent.
+Multi-module repo. All modules under `studio.ikara` groupId. Spring Boot 4.0.6 parent.
 
 ## Parent POM (inherited by all modules)
 
 ```
-org.springframework.boot:spring-boot-starter-parent:3.5.3
-spring-cloud.version: 2025.0.0
+org.springframework.boot:spring-boot-starter-parent:4.0.6
+spring-cloud.version: 2025.1.1
 java.version: 25 (security/core); config: 21
 ```
 
@@ -100,7 +100,7 @@ Key deps:
 | `org.jooq:jooq-postgres-extensions` | 3.20.5 | PG type extensions |
 | `org.postgresql:postgresql` | 42.7.7 | JDBC driver |
 | `org.flywaydb:flyway-core` | (managed) | Migrations |
-| `org.springdoc:springdoc-openapi-starter-webmvc-ui` | 2.8.17 | Swagger UI |
+| `org.springdoc:springdoc-openapi-starter-webmvc-ui` | 3.0.3 | Swagger UI |
 | `spring-boot-starter-web` | (managed) | Web MVC |
 | `spring-boot-starter-security` | (managed) | Spring Security |
 | `spring-boot-starter-cache` | (managed) | Cache |
@@ -159,8 +159,8 @@ DB schema: `core`. No tables or migrations yet.
 | MySQL | 8.x+ | Primary data store |
 | Redis | any recent | L2 cache + pub/sub |
 | RabbitMQ | any recent | Message broker (declared, unused) |
-| Netflix Eureka | via Spring Cloud 2025.0.0 | Service discovery |
-| Spring Cloud Config | via Spring Cloud 2025.0.0 | Centralized config |
+| Netflix Eureka | via Spring Cloud 2025.1.1 | Service discovery |
+| Spring Cloud Config | via Spring Cloud 2025.1.1 | Centralized config |
 
 ---
 

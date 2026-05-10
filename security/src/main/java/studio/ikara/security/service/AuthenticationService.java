@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import studio.ikara.commons.exception.GenericException;
 import studio.ikara.commons.function.Tuple2;
+import studio.ikara.commons.jooq.util.ULongUtil;
 import studio.ikara.commons.security.jwt.ContextAuthentication;
 import studio.ikara.commons.security.jwt.ContextUser;
 import studio.ikara.commons.security.jwt.JWTClaims;
@@ -104,7 +105,7 @@ public class AuthenticationService implements IAuthenticationService {
             if (!host.equals(claims.getHostName()))
                 return CompletableFuture.completedFuture(new ContextAuthentication(null, false, null, null));
 
-            return userService.read(claims.getUserId()).thenComposeAsync(user -> {
+            return userService.read(ULongUtil.valueOf(claims.getUserId())).thenComposeAsync(user -> {
                 if (user == null)
                     return CompletableFuture.completedFuture(new ContextAuthentication(null, false, null, null));
 

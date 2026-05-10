@@ -1,9 +1,9 @@
 package studio.ikara.commons.jooq.jackson;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import java.io.IOException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,7 +24,7 @@ public class UNumberDeserializer<R extends UNumber> extends StdDeserializer<R> {
     private transient AbstractMessageService msgResource;
 
     public UNumberDeserializer(Class<R> classs, AbstractMessageService msgResource) {
-        super((Class<?>) null);
+        super(classs);
         this.classs = classs;
         try {
             this.method = this.classs.getDeclaredMethod("valueOf", String.class);
@@ -37,7 +37,7 @@ public class UNumberDeserializer<R extends UNumber> extends StdDeserializer<R> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public R deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public R deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
 
         String str = p.getValueAsString();
 

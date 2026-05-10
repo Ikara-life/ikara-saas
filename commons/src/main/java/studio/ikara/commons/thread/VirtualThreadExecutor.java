@@ -24,12 +24,13 @@ public class VirtualThreadExecutor {
 
     static {
         log.info("VirtualThreadExecutor initialized with optimized configuration");
-        Runtime.getRuntime().addShutdownHook(Thread.ofVirtual()
-                .name("VirtualThreadExecutor-Shutdown")
-                .start(() -> {
-                    log.info("VirtualThreadExecutor shutting down gracefully");
-                    shutdown();
-                }));
+        Runtime.getRuntime()
+                .addShutdownHook(Thread.ofVirtual()
+                        .name("VirtualThreadExecutor-Shutdown")
+                        .start(() -> {
+                            log.info("VirtualThreadExecutor shutting down gracefully");
+                            shutdown();
+                        }));
     }
 
     // ================== CONFIGURATION METHODS ==================
@@ -38,9 +39,8 @@ public class VirtualThreadExecutor {
      * Creates an optimized virtual thread executor with better resource management
      */
     private static ExecutorService createOptimizedVirtualExecutor() {
-        return Executors.newThreadPerTaskExecutor(Thread.ofVirtual()
-                .name("VirtualTask-", 0)
-                .factory());
+        return Executors.newThreadPerTaskExecutor(
+                Thread.ofVirtual().name("VirtualTask-", 0).factory());
     }
 
     /**
@@ -67,12 +67,11 @@ public class VirtualThreadExecutor {
      * Execute a supplier asynchronously with improved error handling
      */
     public static <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
-        return CompletableFuture.supplyAsync(supplier, EXECUTOR.get())
-                .whenComplete((res, err) -> {
-                    if (err != null) {
-                        log.error("Async task failed: {}", err.getMessage(), err);
-                    }
-                });
+        return CompletableFuture.supplyAsync(supplier, EXECUTOR.get()).whenComplete((res, err) -> {
+            if (err != null) {
+                log.error("Async task failed: {}", err.getMessage(), err);
+            }
+        });
     }
 
     /**
@@ -93,12 +92,11 @@ public class VirtualThreadExecutor {
      * Execute task with explicit error logging and re-throwing
      */
     public static <T> CompletableFuture<T> withErrorLogging(Supplier<T> task) {
-        return CompletableFuture.supplyAsync(task, EXECUTOR.get())
-                .whenComplete((result, throwable) -> {
-                    if (throwable != null) {
-                        log.error("Task execution failed", throwable);
-                    }
-                });
+        return CompletableFuture.supplyAsync(task, EXECUTOR.get()).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                log.error("Task execution failed", throwable);
+            }
+        });
     }
 
     // ================== PARALLEL EXECUTION ==================
@@ -124,23 +122,23 @@ public class VirtualThreadExecutor {
 
         Semaphore semaphore = new Semaphore(concurrencyLimit);
         List<CompletableFuture<T>> futures = tasks.stream()
-                .map(task -> CompletableFuture.supplyAsync(() -> {
-                    try {
-                        semaphore.acquire();
-                        return task.get();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw new CompletionException(e);
-                    } finally {
-                        semaphore.release();
-                    }
-                }, EXECUTOR.get()))
+                .map(task -> CompletableFuture.supplyAsync(
+                        () -> {
+                            try {
+                                semaphore.acquire();
+                                return task.get();
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                throw new CompletionException(e);
+                            } finally {
+                                semaphore.release();
+                            }
+                        },
+                        EXECUTOR.get()))
                 .toList();
 
         return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
-                .thenApply(v -> futures.stream()
-                        .map(CompletableFuture::join)
-                        .toList());
+                .thenApply(v -> futures.stream().map(CompletableFuture::join).toList());
     }
 
     /**
@@ -151,9 +149,8 @@ public class VirtualThreadExecutor {
             return CompletableFuture.failedFuture(new IllegalArgumentException("No tasks provided"));
         }
 
-        List<CompletableFuture<T>> futures = tasks.stream()
-                .map(VirtualThreadExecutor::supplyAsync)
-                .toList();
+        List<CompletableFuture<T>> futures =
+                tasks.stream().map(VirtualThreadExecutor::supplyAsync).toList();
 
         return CompletableFuture.anyOf(futures.toArray(CompletableFuture[]::new))
                 .thenApply(result -> (T) result);
@@ -201,15 +198,17 @@ public class VirtualThreadExecutor {
      * Create a delay using Duration
      */
     public static CompletableFuture<Void> delay(Duration duration) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(duration);
-                return null;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new CompletionException(e);
-            }
-        }, EXECUTOR.get());
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    try {
+                        Thread.sleep(duration);
+                        return null;
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new CompletionException(e);
+                    }
+                },
+                EXECUTOR.get());
     }
 
     /**
@@ -232,8 +231,7 @@ public class VirtualThreadExecutor {
     /**
      * Transform results async
      */
-    public static <T, R> CompletableFuture<R> thenApplyAsync(
-            CompletableFuture<T> future, Function<T, R> mapper) {
+    public static <T, R> CompletableFuture<R> thenApplyAsync(CompletableFuture<T> future, Function<T, R> mapper) {
         return future.thenApplyAsync(mapper, EXECUTOR.get());
     }
 
@@ -257,8 +255,7 @@ public class VirtualThreadExecutor {
      */
     public static <T> CompletableFuture<T> onErrorResume(
             CompletableFuture<T> future, Function<Throwable, CompletableFuture<T>> handler) {
-        return future.handle((res, ex) ->
-                        ex != null ? handler.apply(ex) : CompletableFuture.completedFuture(res))
+        return future.handle((res, ex) -> ex != null ? handler.apply(ex) : CompletableFuture.completedFuture(res))
                 .thenCompose(Function.identity());
     }
 
@@ -319,33 +316,32 @@ public class VirtualThreadExecutor {
         return retryFixedInternal(task, maxAttempts, delay, 1);
     }
 
-    private static <T> CompletableFuture<T> retryInternal(Supplier<T> task, int attemptsLeft, Duration delay, int attempt) {
-        return supplyAsync(task)
-                .exceptionallyCompose(throwable -> {
-                    if (attemptsLeft <= 1) {
-                        log.error("Task failed after {} attempts", attempt);
-                        return CompletableFuture.failedFuture(throwable);
-                    }
+    private static <T> CompletableFuture<T> retryInternal(
+            Supplier<T> task, int attemptsLeft, Duration delay, int attempt) {
+        return supplyAsync(task).exceptionallyCompose(throwable -> {
+            if (attemptsLeft <= 1) {
+                log.error("Task failed after {} attempts", attempt);
+                return CompletableFuture.failedFuture(throwable);
+            }
 
-                    log.warn("Task failed on attempt {}, retrying in {}", attempt, delay);
-                    return delay(delay)
-                            .thenCompose(v -> retryInternal(task, attemptsLeft - 1,
-                                    Duration.ofMillis((long) (delay.toMillis() * 1.5)), attempt + 1));
-                });
+            log.warn("Task failed on attempt {}, retrying in {}", attempt, delay);
+            return delay(delay)
+                    .thenCompose(v -> retryInternal(
+                            task, attemptsLeft - 1, Duration.ofMillis((long) (delay.toMillis() * 1.5)), attempt + 1));
+        });
     }
 
-    private static <T> CompletableFuture<T> retryFixedInternal(Supplier<T> task, int attemptsLeft, Duration delay, int attempt) {
-        return supplyAsync(task)
-                .exceptionallyCompose(throwable -> {
-                    if (attemptsLeft <= 1) {
-                        log.error("Task failed after {} attempts", attempt);
-                        return CompletableFuture.failedFuture(throwable);
-                    }
+    private static <T> CompletableFuture<T> retryFixedInternal(
+            Supplier<T> task, int attemptsLeft, Duration delay, int attempt) {
+        return supplyAsync(task).exceptionallyCompose(throwable -> {
+            if (attemptsLeft <= 1) {
+                log.error("Task failed after {} attempts", attempt);
+                return CompletableFuture.failedFuture(throwable);
+            }
 
-                    log.warn("Task failed on attempt {}, retrying in {}", attempt, delay);
-                    return delay(delay)
-                            .thenCompose(v -> retryFixedInternal(task, attemptsLeft - 1, delay, attempt + 1));
-                });
+            log.warn("Task failed on attempt {}, retrying in {}", attempt, delay);
+            return delay(delay).thenCompose(v -> retryFixedInternal(task, attemptsLeft - 1, delay, attempt + 1));
+        });
     }
 
     // ================== BATCH PROCESSING ==================
@@ -362,14 +358,13 @@ public class VirtualThreadExecutor {
 
         List<List<T>> batches = partition(items, batchSize);
         List<Supplier<List<R>>> batchTasks = batches.stream()
-                .map(batch -> (Supplier<List<R>>) () ->
-                        batch.stream().map(processor).toList())
+                .map(batch ->
+                        (Supplier<List<R>>) () -> batch.stream().map(processor).toList())
                 .toList();
 
         return all(batchTasks, concurrency)
-                .thenApply(batchResults -> batchResults.stream()
-                        .flatMap(List::stream)
-                        .toList());
+                .thenApply(batchResults ->
+                        batchResults.stream().flatMap(List::stream).toList());
     }
 
     private static <T> List<List<T>> partition(List<T> list, int size) {
