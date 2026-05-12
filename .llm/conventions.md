@@ -4,7 +4,7 @@
 
 Migration path: `<module>/src/main/resources/db/migration/` (slash-separated — `db/migration` NOT `db.migration`)
 Naming: `V{n}__{description}.sql` (double underscore, e.g. `V1__init.sql`, `V2__roles_permissions.sql`)
-Current highest: security=V2, core=none
+Current highest: security=V1, core=none
 
 ### SQL Table Conventions
 
@@ -79,6 +79,17 @@ Map DB ENUM column to Java enum via `<forcedType>` in pom.xml jooq profile:
 Example in security: `USER_STATUS_CODE` → `studio.ikara.security.enums.UserStatusCode`
 
 Never hand-edit files in `jooq/` package — overwritten on next codegen run.
+
+## Multi-Tenancy (CLIENT_ID)
+
+All tenant-scoped tables have a `CLIENT_ID BIGINT UNSIGNED DEFAULT NULL` column (FK → `security_clients`):
+- `NULL` = platform-level entity (admins, platform-wide roles/permissions)
+- Non-null = belongs to that client only
+
+Rules:
+- Every service-layer query on user/role/permission data **must** filter by `CLIENT_ID`
+- Platform admins bypass the filter; all other roles see only their own client's data
+- Seed data: platform roles/permissions use `CLIENT_ID = NULL`; client-specific rows set the FK
 
 ## DAO / Service / Controller Pattern
 

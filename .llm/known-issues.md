@@ -1,9 +1,8 @@
 # Known Issues
 
-## 1. Old PG Migration File — Delete It
+## 1. ~~Old PG Migration File~~ — RESOLVED
 
-**File**: `security/src/main/resources/db.migration/V1__init.sql`
-**Status**: Dead file — PostgreSQL DDL, wrong directory (`db.migration` not `db/migration`). Flyway ignores it. Safe to delete.
+Deleted. `security/src/main/resources/db.migration/` directory is gone.
 
 ---
 

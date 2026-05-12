@@ -1,6 +1,6 @@
 package studio.ikara.commons.security.jwt;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import tools.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Collection;

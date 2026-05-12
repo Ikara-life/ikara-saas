@@ -1,8 +1,10 @@
 package studio.ikara.security.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

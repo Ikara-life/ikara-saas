@@ -1,6 +1,6 @@
 package studio.ikara.security.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import tools.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +25,8 @@ public class User extends AbstractUpdatableDTO<ULong, ULong> {
     @Serial
     private static final long serialVersionUID = 4974016469017457972L;
 
+    private ULong clientId;
+    private String clientCode;
     private String userName;
     private String emailId;
     private String phoneNumber;
@@ -75,6 +77,8 @@ public class User extends AbstractUpdatableDTO<ULong, ULong> {
     public ContextUser toContextUser() {
         return new ContextUser()
                 .setId(getId().longValue())
+                .setClientId(clientId != null ? clientId.longValue() : null)
+                .setClientCode(clientCode)
                 .setCreatedBy(getCreatedBy().longValue())
                 .setUpdatedBy(getUpdatedBy().longValue())
                 .setCreatedAt(getCreatedAt())

@@ -121,7 +121,25 @@ Profiles:
 
 Plugins: `jib-maven-plugin:3.4.6` (→ `ghcr.io/ikara-life/security`), `maven-compiler-plugin`, `flyway-maven-plugin`, `spring-boot-maven-plugin`
 
-DB schema: `security`. Tables: `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES`, `SECURITY_ROLES`, `SECURITY_PERMISSIONS`, `SECURITY_ROLE_PERMISSIONS`, `SECURITY_USER_ROLES`. Highest Flyway version: V2.
+DB schema: `security`. Highest Flyway version: V1.
+
+Tables:
+| Table | Purpose |
+|---|---|
+| `SECURITY_CLIENT_TYPE` | Lookup: SYS (System), BUS (Business) |
+| `SECURITY_CLIENTS` | Tenant organisations; CLIENT_ID=NULL means platform-level |
+| `SECURITY_USERS` | Users; CLIENT_ID scopes to tenant |
+| `SECURITY_ROLES` | Roles (ADMIN, INSTRUCTOR, USER); CLIENT_ID=NULL = platform-wide |
+| `SECURITY_PERMISSIONS` | Permissions (e.g. USER_CREATE); CLIENT_ID=NULL = platform-wide |
+| `SECURITY_ROLE_PERMISSIONS` | Many-to-many role ↔ permission |
+| `SECURITY_USER_ROLES` | Many-to-many user ↔ role |
+
+Multi-tenancy rule: all data queries must filter by `CLIENT_ID`. Platform accounts have `CLIENT_ID = NULL`.
+
+Authority string format (generated at login — never stored):
+- Role: `Authorities.{CLIENT_CODE}.ROLE_{NAME}` e.g. `Authorities.DEMO_STUDIO.ROLE_ADMIN`
+- Permission: `Authorities.{CLIENT_CODE}.{PERMISSION_CODE}` e.g. `Authorities.DEMO_STUDIO.USER_CREATE`
+- `AuthoritiesNameUtil` in `commons-security` generates both formats.
 
 Key classes implemented:
 | Class | Role |
@@ -129,9 +147,10 @@ Key classes implemented:
 | `AuthenticationService` | Implements `IAuthenticationService` — login + token validation |
 | `UserRegistrationService` | Register new user → auto-authenticate → return `AuthenticationResponse` |
 | `UserService` | Extends `AbstractJOOQUpdatableDataService` — CRUD + password check |
-| `UserDAO` | jOOQ DAO for `SECURITY_USERS` |
+| `UserDAO` | jOOQ DAO for `SECURITY_USERS`; `loadAuthorities` uses `AuthoritiesNameUtil` |
 | `SecurityConfiguration` | Extends `AbstractJooqBaseConfiguration`, implements `ISecurityConfiguration` |
 | `OpenApiConfig` | Single `OpenAPI` bean, `TAG_AUTH = "Authentication"` |
+| `AuthoritiesNameUtil` | (commons-security) Generates role/permission authority strings from clientCode + name |
 
 Models: `AuthenticationRequest` (userName, password, rememberMe), `AuthenticationResponse` (ContextUser, accessToken, accessTokenExpiryAt), `UserRegistrationRequest` (emailId, password, phone, name fields → `toUser()` sets userName = emailId).
 

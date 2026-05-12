@@ -1,6 +1,5 @@
 package studio.ikara.commons.security.jwt;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +11,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import tools.jackson.annotation.JsonIgnore;
 
 @Data
 @Accessors(chain = true)
@@ -22,6 +22,8 @@ public class ContextUser implements Serializable {
     private static final long serialVersionUID = 3430294045916132045L;
 
     private Long id;
+    private Long clientId;
+    private String clientCode;
     private Long createdBy;
     private Long updatedBy;
     private LocalDateTime createdAt;
