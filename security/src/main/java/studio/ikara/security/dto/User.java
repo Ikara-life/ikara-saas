@@ -1,6 +1,6 @@
 package studio.ikara.security.dto;
 
-import tools.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;

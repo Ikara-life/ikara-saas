@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import tools.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @Accessors(chain = true)
