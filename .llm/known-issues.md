@@ -1,75 +1,79 @@
 # Known Issues
 
-## 1. Old PG Migration in Wrong Directory (Superseded)
+## 1. Old PG Migration File — Delete It
 
 **File**: `security/src/main/resources/db.migration/V1__init.sql`
-**Status**: Superseded — MySQL migration now at correct path `security/src/main/resources/db/migration/V1__init.sql`. Old PG file in `db.migration/` can be deleted.
+**Status**: Dead file — PostgreSQL DDL, wrong directory (`db.migration` not `db/migration`). Flyway ignores it. Safe to delete.
 
 ---
 
 ## 2. ~~Wrong JDBC Driver Class in Flyway Config~~ — RESOLVED
 
-Database switched from PostgreSQL to MySQL. All driver references now correctly set to `com.mysql.cj.jdbc.Driver`.
+Database switched from PostgreSQL to MySQL. All driver refs now `com.mysql.cj.jdbc.Driver`.
 
 ---
 
 ## 3. Config Server Local Path Hardcoded Per Machine
 
 **File**: `config/src/main/resources/application-local.yml:2`
-**Symptom**: Config server fails on any machine other than the current dev's — path is `file:///Users/lawbringr/IdeaProjects/ikara/ikara-saas/configfiles`.
-**Root cause**: Absolute path hardcoded per developer. Updated from original `cepl` path but still machine-specific.
-**Fix**: Use relative path or env var: `file:///${CONFIG_FILES_PATH:./configfiles}`, set `CONFIG_FILES_PATH` per developer.
+**Symptom**: Config server fails on other machines — path is `file:///Users/lawbringr/IdeaProjects/ikara/ikara-saas/configfiles`.
+**Root cause**: Absolute path per developer.
+**Fix**: `file:///${CONFIG_FILES_PATH:./configfiles}`, set `CONFIG_FILES_PATH` per dev.
 
 ---
 
 ## 4. JWT Secret Committed in Plaintext
 
 **File**: `configfiles/application.yml:7`
-**Symptom**: Token signing key `ficity_secret_token_for_the_new_saas_application_it_requires_a_very_long_key_to_sign_tokens` committed to version control.
+**Symptom**: Token signing key in version control.
 **Root cause**: Dev secret checked in, no secrets management.
-**Fix**: Move to env var `JWT_KEY`, reference as `jwt.key: ${JWT_KEY}` in `application.yml`. Rotate secret before any production deployment.
+**Fix**: Env var `JWT_KEY`, reference as `jwt.key: ${JWT_KEY}`. Rotate before prod.
 
 ---
 
 ## 5. Gateway Routes Configured But No Gateway Service
 
 **File**: `configfiles/gateway.yml`
-**Symptom**: Routes for `core` and `security` exist in config but no `gateway/` module in repo. Config server serves file to nothing.
-**Root cause**: Gateway planned, not yet created.
-**Fix**: Create `gateway/` module with `spring-cloud-starter-gateway`, or remove `gateway.yml` until service exists.
+**Symptom**: Routes for `core` and `security` exist, no `gateway/` module.
+**Fix**: Create `gateway/` module or remove `gateway.yml` until needed.
 
 ---
 
 ## 6. RabbitMQ Dependency Declared But Unused
 
 **Files**: `core/pom.xml`, `security/pom.xml`
-**Symptom**: `spring-rabbit` on classpath; Spring auto-config tries to connect to RabbitMQ on startup. Fails if RabbitMQ not running locally.
-**Root cause**: Dependency added speculatively, no producers or consumers implemented.
-**Fix**: Remove `spring-rabbit` until needed, or add `spring.rabbitmq.listener.simple.auto-startup: false` and `spring.autoconfigure.exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration` to block auto-connect.
+**Symptom**: Spring auto-config tries to connect RabbitMQ on startup. Fails if not running.
+**Fix**: Remove `spring-rabbit` until needed, or exclude `RabbitAutoConfiguration`.
 
 ---
 
 ## 7. `core` Module Is an Empty Skeleton
 
 **File**: `core/src/main/java/studio/ikara/core/CoreApplication.java`
-**Symptom**: `core` starts, exposes no endpoints, does nothing.
-**Root cause**: Module is placeholder, business logic not implemented.
-**Fix**: Not bug — but `core/pom.xml` includes unused dependencies (jOOQ, RabbitMQ, springdoc, Flyway) adding startup overhead and failure risk.
+**Status**: Placeholder — no endpoints, unused deps (jOOQ, RabbitMQ, springdoc, Flyway).
 
 ---
 
 ## 8. `ConfigApplication.main()` Missing `public`
 
 **File**: `config/src/main/java/studio/ikara/config/ConfigApplication.java:13`
-**Symptom**: `static void main` is package-private — Spring Boot maven plugin may fail to detect entry point; reflection-based launchers (Jib, native) will error.
-**Root cause**: `public` modifier omitted.
-**Fix**: Change to `public static void main(String[] args)`.
+**Symptom**: Package-private `main` — Jib/native launchers may fail.
+**Fix**: `public static void main(String[] args)`.
 
 ---
 
 ## 9. Feign Client Config Without Feign Dependency
 
-**File**: `configfiles/application.yml` (feign.client.config.*), no `spring-cloud-starter-openfeign` in any pom.xml
-**Symptom**: Feign timeout properties loaded but ignored — no Feign clients exist.
-**Root cause**: Config added anticipating Feign, no clients implemented.
-**Fix**: Add `spring-cloud-starter-openfeign` + `@EnableFeignClients` when needed, or remove dead config.
+**File**: `configfiles/application.yml` (feign.client.config.*)
+**Symptom**: Feign timeout properties loaded but ignored.
+**Fix**: Add `spring-cloud-starter-openfeign` + `@EnableFeignClients` when needed.
+
+---
+
+## 10. springdoc `/v3/api-docs` Returns Base64 Instead of JSON
+
+**Files**: `commons/src/main/java/.../configuration/AbstractBaseConfiguration.java`
+**Symptom**: springdoc 3.x returns spec as `byte[]` with `application/json`. Custom `@Bean JacksonJsonHttpMessageConverter` (Jackson 3.x) intercepts and base64-encodes the bytes. Swagger UI shows "Unable to render — no valid version field".
+**Root cause**: Jackson 3.x serializes `byte[]` as base64. Custom converter registered as `@Bean` takes priority over `ByteArrayHttpMessageConverter` for `application/json`.
+**Fix**: `AbstractBaseConfiguration.extendMessageConverters()` — moves `ByteArrayHttpMessageConverter` (with `application/json` added to supported types) to position 0 in converter chain, before Jackson. `byte[]` responses written raw; Jackson still handles objects.
+**Status**: Fixed.

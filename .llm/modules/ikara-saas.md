@@ -97,8 +97,7 @@ Key deps:
 | `studio.ikara:commons-security` | 0.0.1-SNAPSHOT | JWT/security filter |
 | `org.jooq:jooq` | 3.20.5 | jOOQ |
 | `org.jooq:jooq-codegen` | 3.20.5 | Code gen |
-| `org.jooq:jooq-postgres-extensions` | 3.20.5 | PG type extensions |
-| `org.postgresql:postgresql` | 42.7.7 | JDBC driver |
+| `com.mysql:mysql-connector-j` | (managed) | MySQL JDBC driver |
 | `org.flywaydb:flyway-core` | (managed) | Migrations |
 | `org.springdoc:springdoc-openapi-starter-webmvc-ui` | 3.0.3 | Swagger UI |
 | `spring-boot-starter-web` | (managed) | Web MVC |
@@ -122,7 +121,7 @@ Profiles:
 
 Plugins: `jib-maven-plugin:3.4.6` (→ `ghcr.io/ikara-life/security`), `maven-compiler-plugin`, `flyway-maven-plugin`, `spring-boot-maven-plugin`
 
-DB schema: `security`. Tables: `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES`. Highest Flyway version: V1.
+DB schema: `security`. Tables: `SECURITY_USERS`, `SECURITY_AUTHORITIES`, `SECURITY_USER_AUTHORITIES`, `SECURITY_ROLES`, `SECURITY_PERMISSIONS`, `SECURITY_ROLE_PERMISSIONS`, `SECURITY_USER_ROLES`. Highest Flyway version: V2.
 
 Key classes implemented:
 | Class | Role |

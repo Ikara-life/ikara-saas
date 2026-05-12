@@ -3,7 +3,7 @@
 ## Startup Order
 
 Start in order (each depends on previous):
-1. PostgreSQL + Redis + RabbitMQ (external)
+1. MySQL + Redis + RabbitMQ (external)
 2. `eureka/` — port 9999
 3. `config/` — port 8888
 4. `security/` — port 8001
@@ -19,7 +19,7 @@ cd security && mvn spring-boot:run
 cd core && mvn spring-boot:run
 ```
 
-Config server local profile reads from `configfiles/` at `file:///Users/cepl/IdeaProjects/ikara-saas/configfiles` — update path in `config/src/main/resources/application-local.yml` to match local checkout.
+Config server local profile reads from `configfiles/`. Path in `config/src/main/resources/application-local.yml` is machine-specific — update to match local checkout (see known-issues #3).
 
 ## Build
 
@@ -60,7 +60,7 @@ cd security && mvn generate-sources -P jooq
 cd core && mvn generate-sources -P jooq
 ```
 
-Requires running PostgreSQL with schema pre-created. Reads DB url/credentials from pom.xml jooq profile (localhost:5432, DB name varies per module — see pom.xml `<jdbcUrl>`).
+Requires running MySQL with schema pre-created (Flyway must have run at least once). Reads DB url/credentials from pom.xml jooq profile (`localhost:3306`, DB name = `security` or `core` — see `<database.mysql.jdbc.url>` in pom.xml properties).
 
 ## Database Migrations
 
@@ -71,7 +71,7 @@ Manual run:
 mvn flyway:migrate -P jooq
 ```
 
-Migration files: `security/src/main/resources/db.migration/` (note: dot not slash — see known-issues.md).
+Migration files: `security/src/main/resources/db/migration/` (slash-separated). Old `db.migration/` dir has stale PG file — ignore it.
 
 ## Docker / Container Build
 

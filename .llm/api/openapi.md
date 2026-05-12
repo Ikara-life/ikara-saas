@@ -1,15 +1,21 @@
-# OpenAPI / Swagger Setup
+# OpenAPI Setup
 
-`springdoc-openapi-starter-webmvc-ui` 2.8.17 (latest as of 2026-04). Spring Boot 3.x — NOT old `springdoc-openapi-ui` 1.x (Spring Boot 2.7).
+springdoc `3.0.3` for Spring Boot 4.x. Artifact: `springdoc-openapi-starter-webmvc-ui:3.0.3`.
 
 ## Endpoints
 
-| Service | Swagger UI | API JSON |
+| Service | OpenAPI JSON | UI |
 |---|---|---|
-| security (8001) | `http://localhost:8001/swagger-ui.html` | `http://localhost:8001/v3/api-docs` |
-| core (8005) | `http://localhost:8005/swagger-ui.html` | `http://localhost:8005/v3/api-docs` |
+| security (8001) | `http://localhost:8001/v3/api-docs` | `http://localhost:8001/swagger-ui.html` |
+| core (8005) | `http://localhost:8005/v3/api-docs` | `http://localhost:8005/swagger-ui.html` |
 
-Postman import: **Import → Link → paste URL**.
+Postman import: **Import → Link → paste `/v3/api-docs` URL**.
+
+---
+
+## Known Fix — Base64 Response Bug
+
+springdoc 3.x returns spec as `byte[]` with `application/json`. Jackson 3.x (in `@Bean JacksonJsonHttpMessageConverter`) base64-encodes byte arrays. Fix already applied in `AbstractBaseConfiguration.extendMessageConverters()` — moves `ByteArrayHttpMessageConverter` before Jackson in converter chain. No action needed for new services; fix lives in commons.
 
 ---
 
@@ -19,33 +25,34 @@ Postman import: **Import → Link → paste URL**.
 
 ```xml
 <properties>
-    <package.o.springdoc-openapi.version>2.8.17</package.o.springdoc-openapi.version>
+    <package.o.springdoc.version>3.0.3</package.o.springdoc.version>
 </properties>
 
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>${package.o.springdoc-openapi.version}</version>
+    <version>${package.o.springdoc.version}</version>
 </dependency>
 ```
 
-### 2. application.yml (or via configfiles)
+### 2. configfiles/<service>.yml
 
 ```yaml
-springdoc.api-docs.path: /v3/api-docs
-springdoc.swagger-ui.path: /swagger-ui.html
-springdoc.swagger-ui.enabled: true
-springdoc.api-docs.enabled: true
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
 ```
 
-Permit Swagger paths without auth — add to `ISecurityConfiguration` exclusion list:
-- `/swagger-ui.html`
-- `/swagger-ui/**`
-- `/v3/api-docs/**`
+No need to set `url`, `config-url`, or `disable-swagger-default-url` — those cause rendering issues.
 
-### 3. OpenApiConfig — create per service, customise title/tags
+Permit paths in `SecurityFilterChain` (already in `ISecurityConfiguration` default):
+- `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs`, `/v3/api-docs/**`
 
-Security module pattern (use as template):
+### 3. OpenApiConfig — one per service
 
 ```java
 @Configuration
@@ -73,7 +80,7 @@ public class OpenApiConfig {
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Operation(summary = "Authenticate user", description = "Returns JWT on valid credentials.")
+    @Operation(summary = "Login", description = "Returns JWT on valid credentials.")
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest req, HttpServletRequest request) { ... }
 }
@@ -81,9 +88,9 @@ public class AuthController {
 
 ---
 
-## Tag / Naming
+## Tag / Naming Rules
 
 - One tag per controller — matches functional domain
 - Define as `TAG_*` constant in `OpenApiConfig`
-- `@Tag(name = OpenApiConfig.TAG_*)` on controller class only
-- `@Operation` takes only `summary` and `description` — never `tags`
+- `@Tag(name = OpenApiConfig.TAG_*)` on controller class only, never on methods
+- `@Operation` takes only `summary` + `description` — no `tags`, no `operationId` override
